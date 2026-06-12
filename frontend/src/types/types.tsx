@@ -2,7 +2,7 @@ export interface Todo {
     id: number,
     title: string,
     description: string,
-    isComplete: boolean
+    isCompleted: boolean
 }
 
 export interface TodoStore {

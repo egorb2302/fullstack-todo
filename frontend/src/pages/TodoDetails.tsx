@@ -23,7 +23,7 @@ export default function TodoDetails() {
             <h1>{data.title}</h1>
             <p>{data.description}</p>
             <p>
-                {data.isComplete 
+                {data.isCompleted
                 ? "Complete" 
                 : "In Progress"}
             </p>

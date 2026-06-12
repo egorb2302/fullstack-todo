@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import path from 'path'
-import fs, { read } from 'fs'
+import fs from 'fs'
 import { ServerTodoType } from './types/types';
 
 dotenv.config()
@@ -29,39 +29,6 @@ const getTodo = async (id: number): Promise<ServerTodoType | undefined> => {
     const data = await getDataFromBD()
     const current = data.find(t => t.id === id)
     return current
-}
-
-const addTodo = async (todo: Omit<ServerTodoType, 'id'>): Promise<void> => {
-    const uniqueTask = { ...todo }
-    const response = await fetch(`${URL}/todos`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(uniqueTask)
-    })
-    if (!response.ok) throw new Error("Error of adding todo")
-}
-
-const removeTodo = async (id: number): Promise<void> => {
-    const response = await fetch(`${URL}/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    if (!response.ok) throw new Error("Error of deleting a todo")
-}
-
-const patchTodo = async (id: number, todo: Partial<ServerTodoType>): Promise<void> => {
-    const response = await fetch(`${URL}/${id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(todo)
-    })
-    if (!response.ok) throw new Error("Error of patching a task")
 }
 
 app.get('/todos', async (req: Request, res: Response) => {
@@ -97,13 +64,54 @@ app.post('/todos', async (req: Request, res: Response) => {
             description: req.body.description,
             isCompleted: req.body.isCompleted
         }
-        const readed = await fs.promises.readFile(pathToBD, "utf-8")
-        const parsed = JSON.parse(readed)
-        await fs.promises.writeFile(pathToBD, JSON.stringify([ ...parsed, newTask ]), "utf-8")
+        const data = await getDataFromBD()
+        await fs.promises.writeFile(pathToBD, JSON.stringify([ ...data, newTask ], null, 2), "utf-8")
         res.status(201).json({ message: "Task adding was successfully", task: newTask})
     } catch (err) {
         console.log(err)
         res.status(500).json({ error: "Post todo error" })
+    }
+})
+
+app.delete('/todos/:id', async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id)
+        const data = await getDataFromBD()
+        const filtred = data.filter(t => t.id !== id)
+        await fs.promises.writeFile(pathToBD, JSON.stringify(filtred, null, 2), "utf-8")
+        res.status(201).json({ message: "Task deleting was successfully" })
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({ error: "Delete todo error"})
+    }
+})
+
+app.patch('/todos/:id', async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id)
+        const data = await getDataFromBD()
+        const index = data.findIndex(t => t.id === id);
+        
+        if (index === -1) {
+            return res.status(404).json({ error: "Todo not found" });
+        }
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({ error: "No fields to update" });
+        }
+        
+        const current = data[index];
+        const updatedTodo = {
+            ...current,
+            title: req.body.title ?? current.title,
+            description: req.body.description ?? current.description,
+            isCompleted: req.body.isCompleted ?? current.isCompleted
+        };
+        data[index] = updatedTodo;
+        await fs.promises.writeFile(pathToBD, JSON.stringify(data, null, 2), "utf-8")
+        res.status(200).json({ message: "Task patching was successfully", todo: updatedTodo })
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({ error: "Patch todo error"})
     }
 })
 

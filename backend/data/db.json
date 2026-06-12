@@ -1,5 +1,20 @@
 [
-  {"id":1,"title":"Изучить React Query","description":"Освоить работу с хуками useQuery и useMutation","isComplete":false},
-  {"id":2,"title":"Настроить Zustand store","description":"Создать хранилище с persist middleware","isComplete":true},
-  {"id":3,"title":"Написать API сервис","description":"Создать функции для работы с бэкендом","isComplete":false}
+  {
+    "id": 1,
+    "title": "Изучить React Query",
+    "description": "Освоить работу с хуками useQuery и useMutation",
+    "isCompleted": false
+  },
+  {
+    "id": 2,
+    "title": "Настроить Zustand store",
+    "description": "Создать хранилище с persist middleware",
+    "isCompleted": false
+  },
+  {
+    "id": 3,
+    "title": "Написать API сервис",
+    "description": "Создать функции для работы с бэкендом",
+    "isCompleted": false
+  }
 ]
