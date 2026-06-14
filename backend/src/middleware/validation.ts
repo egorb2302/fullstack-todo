@@ -19,13 +19,12 @@ export const validate = (schema: ZodObject, source: ValidationSource) => {
             next()
         } catch (error) {
             if (error instanceof ZodError) {
+                const flattened = error.flatten();
+
                 res.status(400).json({
                     error: "Validation failed",
-                    body: req.body,
-                    details: error.issues.map(issue => ({
-                        path: issue.path.join('.'),
-                        message: issue.message,
-                    }))
+                    formErrors: flattened.formErrors,
+                    fieldErrors: flattened.fieldErrors
                 })
             } else {
                 res.status(500).json({ error: "Internal server error" })
