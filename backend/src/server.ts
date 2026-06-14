@@ -10,6 +10,26 @@ import { createSchema, paramsSchema, taskSchema } from './schemas/todoSchemas';
 import { corsConfig, helmetConfig, rateLimitConfig } from '../security.config';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
+import pino from 'pino';
+
+const isDevelopment = process.env.NODE_ENV !== 'production'
+
+export const logger = pino({
+    level: process.env.LOG_LEVEL || 'info',
+    transport: isDevelopment ? {
+        target: 'pino-pretty',
+        options: {
+            colorize: true, 
+            translateTime: 'SYS:standard',
+            ignore: 'pid,hostname',
+            singleLine: false,
+            hideObject: false,
+            messageKey: 'msg',
+            levelFirst: true, 
+            messageFormat: '{msg}'
+        }
+    } : undefined
+});
 
 export let isShuttingDown = false;
 
@@ -26,15 +46,15 @@ app.use(rateLimit(rateLimitConfig))
 app.use(express.json())
 
 const shutdown = () => {
-    console.log('\n🛑 Shutting down...');
+    logger.info('\n Shutting down...');
     
     server.close(() => {
-        console.log('✅ Server closed');
+        logger.info(' Server closed');
         process.exit(0);
     });
     
     setTimeout(() => {
-        console.error('❌ Force shutdown');
+        logger.error(' Force shutdown');
         process.exit(1);
     }, 5000);
 };
@@ -57,7 +77,7 @@ app.get('/todos', async (req: Request, res: Response): Promise<void | Response> 
     try {
         res.send(await getDataFromBD())
     } catch (err) {
-        console.error(err)
+        logger.error(err)
         return
     }
 })
@@ -73,7 +93,7 @@ app.get(`/todos/:id`, validate(paramsSchema, "params"), async (req: Request, res
 
         res.json(todo)
     } catch (err) {
-        console.error(err)
+        logger.error(err)
         res.status(500).json({ error: 'Internal server error' })
     }
 })
@@ -90,7 +110,7 @@ app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Res
         await fs.promises.writeFile(pathToBD, JSON.stringify([ ...data, newTask ], null, 2), "utf-8")
         res.status(200).json({ message: "Task adding was successfully", task: newTask})
     } catch (err) {
-        console.log(err)
+        logger.error(err)
         res.status(500).json({ error: "Post todo error" })
     }
 })
@@ -103,7 +123,7 @@ app.delete('/todos/:id', validate(paramsSchema, "params"), async (req: Request, 
         await fs.promises.writeFile(pathToBD, JSON.stringify(filtred, null, 2), "utf-8")
         res.status(200).json({ message: "Task deleting was successfully" })
     } catch (err) {
-        console.error(err)
+        logger.error(err)
         res.status(500).json({ error: "Delete todo error"})
     }
 })
@@ -134,12 +154,12 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
         await fs.promises.writeFile(pathToBD, JSON.stringify(data, null, 2), "utf-8")
         res.status(200).json({ message: "Task patching was successfully", todo: updatedTodo })
     } catch (err) {
-        console.error(err)
+        logger.error(err)
         res.status(500).json({ error: "Patch todo error"})
     }
 })
 
-const server = app.listen(PORT, () => console.log(`Server is running on ${URL}`))
+const server = app.listen(PORT, () => logger.info(`Server is running on ${URL}`))
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
