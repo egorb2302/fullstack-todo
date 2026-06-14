@@ -1,8 +1,9 @@
 import dotenv from 'dotenv'
-import express, { Request, Response } from 'express'
+import express, { Request, Response, Express } from 'express'
 import cors from 'cors'
 import path from 'path'
 import fs from 'fs'
+import { Server } from 'http'
 import { ServerTodoType } from './types/types'
 import { getDataFromBD, getTodo } from './controllers/controllers'
 import { validate } from './middleware/validation'
@@ -11,9 +12,12 @@ import { corsConfig, helmetConfig, rateLimitConfig } from '../security.config';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 
+export let isShuttingDown = false;
+
 dotenv.config()
+const PORT = process.env.PORT || "5000"
 const URL = process.env.URL || "http://localhost:5000"
-const app = express()
+const app: Express = express()
 export const pathToBD = path.resolve(__dirname, "..", "data", "db.json");
 
 app.use(express.urlencoded({ extended: true }))
@@ -21,6 +25,21 @@ app.use(helmet(helmetConfig))
 app.use(cors(corsConfig))
 app.use(rateLimit(rateLimitConfig))
 app.use(express.json())
+
+const shutdown = () => {
+    console.log('\n🛑 Shutting down...');
+    
+    server.close(() => {
+        console.log('✅ Server closed');
+        process.exit(0);
+    });
+    
+    setTimeout(() => {
+        console.error('❌ Force shutdown');
+        process.exit(1);
+    }, 5000);
+};
+
 
 app.get('/', (req: Request, res: Response) => {
     res.json({ 
@@ -121,4 +140,7 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
     }
 })
 
-app.listen(PORT, () => console.log(`Server is running on ${URL}`))
+const server = app.listen(PORT, () => console.log(`Server is running on ${URL}`))
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
