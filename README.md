@@ -8,7 +8,7 @@ In this project, i try to create a fullstack application with it own server and 
 
 **Client:** TypeScript, React, TanStack, Zod
 
-**Server:** Node.js + Express
+**Server:** Node.js + Express, Swagger UI for REST API
 
 
 ## How to run
