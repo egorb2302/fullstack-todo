@@ -27,7 +27,7 @@ export const deleteTodo = async (id: number): Promise<void> => {
     if (!response.ok) throw new Error(`Error of deleting todo with id ${id}`)
 }
 
-export const addTodo = async (task: Todo): Promise<Todo> => {
+export const addTodo = async (task: Omit<Todo, "id">): Promise<Todo> => {
     const response = await fetch(TODOS_URL, {
         method: "POST",
         headers: {
@@ -40,7 +40,7 @@ export const addTodo = async (task: Todo): Promise<Todo> => {
     return data
 }
 
-export const patchTodo = async (id: number, task: Todo): Promise<Todo> => {
+export const patchTodo = async ({ id, ...task }: { id: number } & Partial<Todo>): Promise<Todo> => {
     const response = await fetch(`${TODOS_URL}/${id}`, {
         method: "PATCH",
         headers: {

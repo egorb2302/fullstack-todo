@@ -3,35 +3,26 @@ import express, { Request, Response } from 'express'
 import cors from 'cors'
 import path from 'path'
 import fs from 'fs'
-import { ServerTodoType } from './types/types';
+import { ServerTodoType } from './types/types'
+import { getDataFromBD, getTodo } from './controllers/controllers'
 
 dotenv.config()
 const PORT = process.env.PORT || "5000"
 const URL = process.env.URL || "http://localhost:5000"
 const app = express()
-const pathToBD = path.resolve(__dirname, "..", "data", "db.json");
+export const pathToBD = path.resolve(__dirname, "..", "data", "db.json");
 
-app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
     origin: [`http://localhost:${PORT}`, 'http://localhost:5173'], 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type']
 }));
+app.use(express.json())
 
-const getDataFromBD = async (): Promise<ServerTodoType[]> => {
-    const dbData = await fs.promises.readFile(pathToBD, "utf-8")
-    const database = await JSON.parse(dbData)
-    return database
-}
+app.get('/todos', async (req: Request, res: Response): Promise<void | Response> => {
+    if (!req) return res.status(404).json({ error: "Cant get todos data" })
 
-const getTodo = async (id: number): Promise<ServerTodoType | undefined> => {
-    const data = await getDataFromBD()
-    const current = data.find(t => t.id === id)
-    return current
-}
-
-app.get('/todos', async (req: Request, res: Response) => {
     try {
         res.send(await getDataFromBD())
     } catch (err) {
@@ -40,7 +31,7 @@ app.get('/todos', async (req: Request, res: Response) => {
     }
 })
 
-app.get(`/todos/:id`, async (req: Request, res: Response) => {
+app.get(`/todos/:id`, async (req: Request, res: Response): Promise<void | Response> => {
     try {
         const id = Number(req.params.id)
         const todo = await getTodo(id)
@@ -56,7 +47,7 @@ app.get(`/todos/:id`, async (req: Request, res: Response) => {
     }
 })
 
-app.post('/todos', async (req: Request, res: Response) => {
+app.post('/todos', async (req: Request, res: Response): Promise<void> => {
     try {
         const newTask: ServerTodoType = {
             id: Date.now(),
@@ -73,7 +64,7 @@ app.post('/todos', async (req: Request, res: Response) => {
     }
 })
 
-app.delete('/todos/:id', async (req: Request, res: Response) => {
+app.delete('/todos/:id', async (req: Request, res: Response): Promise<void> => {
     try {
         const id = Number(req.params.id)
         const data = await getDataFromBD()
@@ -86,7 +77,7 @@ app.delete('/todos/:id', async (req: Request, res: Response) => {
     }
 })
 
-app.patch('/todos/:id', async (req: Request, res: Response) => {
+app.patch('/todos/:id', async (req: Request, res: Response): Promise<void | Response> => {
     try {
         const id = Number(req.params.id)
         const data = await getDataFromBD()
@@ -115,4 +106,4 @@ app.patch('/todos/:id', async (req: Request, res: Response) => {
     }
 })
 
-app.listen(PORT, () => console.log(`Server is running on localhost:${PORT}`))
+app.listen(PORT, () => console.log(`Server is running on ${URL}`))

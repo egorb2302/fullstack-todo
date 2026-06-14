@@ -6,6 +6,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/todos" element={<TodoList />} />
+      <Route index element={<TodoList />} />
       <Route path={"/todos/:id"} element={<TodoDetails />} />
     </Routes>
   )
