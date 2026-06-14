@@ -6,20 +6,20 @@ import fs from 'fs'
 import { ServerTodoType } from './types/types'
 import { getDataFromBD, getTodo } from './controllers/controllers'
 import { validate } from './middleware/validation'
-import { createSchema, paramsSchema, queryParamsSchema, taskSchema } from './schemas/todoSchemas';
+import { createSchema, paramsSchema, taskSchema } from './schemas/todoSchemas';
+import { corsConfig, helmetConfig, rateLimitConfig } from '../security.config';
+import helmet from 'helmet';
+import { rateLimit } from 'express-rate-limit';
 
 dotenv.config()
-const PORT = process.env.PORT || "5000"
 const URL = process.env.URL || "http://localhost:5000"
 const app = express()
 export const pathToBD = path.resolve(__dirname, "..", "data", "db.json");
 
 app.use(express.urlencoded({ extended: true }))
-app.use(cors({
-    origin: [`http://localhost:${PORT}`, 'http://localhost:5173'], 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type']
-}));
+app.use(helmet(helmetConfig))
+app.use(cors(corsConfig))
+app.use(rateLimit(rateLimitConfig))
 app.use(express.json())
 
 app.get('/', (req: Request, res: Response) => {
