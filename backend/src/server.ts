@@ -6,8 +6,10 @@ import fs from 'fs'
 import { ServerTodoType } from './types/types'
 import { getDataFromBD, getTodo } from './controllers/controllers'
 import { validate } from './middleware/validation'
+import swaggerUi from 'swagger-ui-express';
+import { openApiDocument } from './openapi';
 import { createSchema, paramsSchema, taskSchema } from './schemas/todoSchemas';
-import { corsConfig, helmetConfig, rateLimitConfig } from '../security.config';
+import { corsConfig, helmetConfig, rateLimitConfig } from '../config/security.config';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 import pino from 'pino';
@@ -59,6 +61,7 @@ const shutdown = () => {
     }, 5000);
 };
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument))
 
 app.get('/', (req: Request, res: Response) => {
     res.json({ 
@@ -111,7 +114,7 @@ app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Res
         res.status(200).json({ message: "Task adding was successfully", task: newTask})
     } catch (err) {
         logger.error(err)
-        res.status(500).json({ error: "Post todo error" })
+        res.status(500).json({ error: "Internal server error" })
     }
 })
 
@@ -124,7 +127,7 @@ app.delete('/todos/:id', validate(paramsSchema, "params"), async (req: Request, 
         res.status(200).json({ message: "Task deleting was successfully" })
     } catch (err) {
         logger.error(err)
-        res.status(500).json({ error: "Delete todo error"})
+        res.status(500).json({ error: "Internal server error"})
     }
 })
 
@@ -155,7 +158,7 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
         res.status(200).json({ message: "Task patching was successfully", todo: updatedTodo })
     } catch (err) {
         logger.error(err)
-        res.status(500).json({ error: "Patch todo error"})
+        res.status(500).json({ error: "Internal server error"})
     }
 })
 
