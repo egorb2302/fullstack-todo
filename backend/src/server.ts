@@ -5,6 +5,8 @@ import path from 'path'
 import fs from 'fs'
 import { ServerTodoType } from './types/types'
 import { getDataFromBD, getTodo } from './controllers/controllers'
+import { validate } from './middleware/validation'
+import { createSchema, paramsSchema, queryParamsSchema, taskSchema } from './schemas/todoSchemas';
 
 dotenv.config()
 const PORT = process.env.PORT || "5000"
@@ -20,9 +22,20 @@ app.use(cors({
 }));
 app.use(express.json())
 
-app.get('/todos', async (req: Request, res: Response): Promise<void | Response> => {
-    if (!req) return res.status(404).json({ error: "Cant get todos data" })
+app.get('/', (req: Request, res: Response) => {
+    res.json({ 
+        message: 'Todo API is running',
+        endpoints: {
+            getAll: 'GET /todos',
+            getOne: 'GET /todos/:id',
+            create: 'POST /todos',
+            update: 'PATCH /todos/:id',
+            delete: 'DELETE /todos/:id'
+        }
+    });
+});
 
+app.get('/todos', async (req: Request, res: Response): Promise<void | Response> => {
     try {
         res.send(await getDataFromBD())
     } catch (err) {
@@ -31,7 +44,7 @@ app.get('/todos', async (req: Request, res: Response): Promise<void | Response> 
     }
 })
 
-app.get(`/todos/:id`, async (req: Request, res: Response): Promise<void | Response> => {
+app.get(`/todos/:id`, validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void | Response> => {
     try {
         const id = Number(req.params.id)
         const todo = await getTodo(id)
@@ -47,7 +60,7 @@ app.get(`/todos/:id`, async (req: Request, res: Response): Promise<void | Respon
     }
 })
 
-app.post('/todos', async (req: Request, res: Response): Promise<void> => {
+app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Response): Promise<void> => {
     try {
         const newTask: ServerTodoType = {
             id: Date.now(),
@@ -57,27 +70,29 @@ app.post('/todos', async (req: Request, res: Response): Promise<void> => {
         }
         const data = await getDataFromBD()
         await fs.promises.writeFile(pathToBD, JSON.stringify([ ...data, newTask ], null, 2), "utf-8")
-        res.status(201).json({ message: "Task adding was successfully", task: newTask})
+        res.status(200).json({ message: "Task adding was successfully", task: newTask})
     } catch (err) {
         console.log(err)
         res.status(500).json({ error: "Post todo error" })
     }
 })
 
-app.delete('/todos/:id', async (req: Request, res: Response): Promise<void> => {
+app.delete('/todos/:id', validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void> => {
     try {
         const id = Number(req.params.id)
         const data = await getDataFromBD()
         const filtred = data.filter(t => t.id !== id)
         await fs.promises.writeFile(pathToBD, JSON.stringify(filtred, null, 2), "utf-8")
-        res.status(201).json({ message: "Task deleting was successfully" })
+        res.status(200).json({ message: "Task deleting was successfully" })
     } catch (err) {
         console.error(err)
         res.status(500).json({ error: "Delete todo error"})
     }
 })
 
-app.patch('/todos/:id', async (req: Request, res: Response): Promise<void | Response> => {
+app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "body"), 
+    async (req: Request, res: Response): Promise<void | Response> => {
+        
     try {
         const id = Number(req.params.id)
         const data = await getDataFromBD()
