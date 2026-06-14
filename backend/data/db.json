@@ -22,5 +22,11 @@
     "title": "Validation test",
     "description": "valid or not to be valid",
     "isCompleted": false
+  },
+  {
+    "id": 1781450142632,
+    "title": "Swagger",
+    "description": "Try to use swagger paths",
+    "isCompleted": true
   }
 ]

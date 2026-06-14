@@ -3,7 +3,7 @@ import { ZodError, ZodObject } from "zod";
 
 type ValidationSource = 'body' | 'params' | 'query'
 
-export const validate = (schema: ZodObject, source: ValidationSource) => {
+export const validate = (schema: ZodObject<any>, source: ValidationSource) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
             const validatedData = await schema.parseAsync(req[source])
