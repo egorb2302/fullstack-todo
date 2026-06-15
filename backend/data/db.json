@@ -1,32 +1,20 @@
 [
   {
-    "id": 3,
-    "title": "Написать API сервис",
-    "description": "Создать функции для работы с бэкендом",
-    "isCompleted": false
-  },
-  {
-    "id": 1781432686500,
-    "title": "test",
-    "description": "asdasdfasf",
-    "isCompleted": true
-  },
-  {
-    "id": 1781434182980,
-    "title": "NewTaskMutationTest",
-    "description": "just a mutation test",
-    "isCompleted": true
-  },
-  {
-    "id": 1781439373731,
-    "title": "Validation test",
-    "description": "valid or not to be valid",
-    "isCompleted": false
-  },
-  {
     "id": 1781450142632,
     "title": "Swagger",
     "description": "Try to use swagger paths",
+    "isCompleted": true
+  },
+  {
+    "id": 1781526363592,
+    "title": "UI for project",
+    "description": "Adding UI styles for my todo-list",
+    "isCompleted": true
+  },
+  {
+    "id": 1781526591072,
+    "title": "Fix backend",
+    "description": "Fix task-adding algorithm for better UX",
     "isCompleted": true
   }
 ]
