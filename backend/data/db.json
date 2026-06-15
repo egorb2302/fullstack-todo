@@ -22,5 +22,11 @@
     "title": "Swagger",
     "description": "Try to use swagger paths",
     "isCompleted": true
+  },
+  {
+    "id": 1781526363592,
+    "title": "UI for project",
+    "description": "Adding UI styles for my todo-list",
+    "isCompleted": false
   }
 ]
