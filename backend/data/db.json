@@ -6,12 +6,6 @@
     "isCompleted": false
   },
   {
-    "id": 1781432686500,
-    "title": "test",
-    "description": "asdasdfasf",
-    "isCompleted": true
-  },
-  {
     "id": 1781434182980,
     "title": "NewTaskMutationTest",
     "description": "just a mutation test",
