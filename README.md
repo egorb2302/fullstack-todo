@@ -6,7 +6,7 @@ In this project, i try to create a fullstack application with it own server and 
 
 ## Tech Stack of project ( at this moment )
 
-**Client:** TypeScript, React, TanStack, Zod
+**Client:** TypeScript, React, TanStack, Zod, Tailwind CSS
 
 **Server:** Node.js + Express, Swagger UI for REST API
 
