@@ -1,5 +1,5 @@
 
-# Fullstack stydying project
+# Fullstack studying project
 
 In this project, i try to create a fullstack application with it own server and client, that fetching data from him.
 
