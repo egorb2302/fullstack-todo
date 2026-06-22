@@ -1,52 +1,24 @@
 import dotenv from 'dotenv'
 import express, { Request, Response, Express } from 'express'
-import cors from 'cors'
-import path from 'path'
+import { securityMiddleware } from './middleware/security';
 import { ServerTodoType } from './types/types'
 import { getDataFromBD, getTodo } from './controllers/controllers'
 import { validate } from './middleware/validation'
 import swaggerUi from 'swagger-ui-express';
 import { openApiDocument } from './openapi';
 import { createSchema, paramsSchema, taskSchema } from './schemas/todoSchemas';
-import { corsConfig, helmetConfig, rateLimitConfig } from '../config/security.config';
-import helmet from 'helmet';
-import { rateLimit } from 'express-rate-limit';
-import pino from 'pino';
+import logger from './middleware/logger';
 import { db } from '../src/db/index';
 import { todos } from '../src/db/schema';
 import { eq } from 'drizzle-orm';
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
-
-export const logger = pino({
-    level: process.env.LOG_LEVEL || 'info',
-    transport: isDevelopment ? {
-        target: 'pino-pretty',
-        options: {
-            colorize: true, 
-            translateTime: 'SYS:standard',
-            ignore: 'pid,hostname',
-            singleLine: false,
-            hideObject: false,
-            messageKey: 'msg',
-            levelFirst: true, 
-            messageFormat: '{msg}'
-        }
-    } : undefined
-});
-
 export let isShuttingDown = false;
 
 dotenv.config()
-const PORT = process.env.PORT || "5000"
-const URL = process.env.URL || "http://localhost:5000"
 const app: Express = express()
-export const pathToBD = path.resolve(__dirname, "..", "data", "db.json");
 
 app.use(express.urlencoded({ extended: true }))
-app.use(helmet(helmetConfig))
-app.use(cors(corsConfig))
-app.use(rateLimit(rateLimitConfig))
+app.use(securityMiddleware)
 app.use(express.json())
 
 const shutdown = () => {
@@ -149,7 +121,7 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
     }
 })
 
-const server = app.listen(PORT, () => logger.info(`Server is running on ${URL}`))
+const server = app.listen(process.env.PORT, () => logger.info(`Server is running on localhost:5000`))
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
