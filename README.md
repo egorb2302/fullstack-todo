@@ -8,31 +8,25 @@ In this project, i try to create a fullstack application with it own server and 
 
 **Client:** TypeScript, React, TanStack, Zod, Tailwind CSS
 
-**Server:** Node.js + Express, Swagger UI for REST API
+**Server:** Node.js + Express, PostgreSQL + Drizzle ORM ,Swagger UI for REST API
 
 
 ## How to run
 
-Install all dependencies in project, switch on root dir and run project with npm:
-
-```
-  npm install
-  cd root-dir ( if you're not in it )
-  npm run dev
-```
-
-### If project still not working, and throw you an errors after previous steps:
-
-You need to install all dependencies again, but in dir's own folders and try to run projet again:
 ```
   (in 1 cmd, from root dir)
   cd backend
   npm install
+  docker-compose up -d
+  npm run db:generate
+  npm run db:migrate
+  npm run dev
 ```
    
 ```
   (in 2 cmd, from root dir)
   cd frontend
   npm install
+  npm run dev
 ```    
 then, switch to root dir and run project
