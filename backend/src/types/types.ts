@@ -1,6 +1,5 @@
 export interface ServerTodoType {
-    id: number,
     title: string,
-    description: string,
-    isCompleted: boolean
+    description: string | null,
+    isCompleted: boolean | null
 }

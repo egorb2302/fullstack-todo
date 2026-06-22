@@ -1,7 +1,8 @@
 const PORT = process.env.PORT || "5000"
 
 export const corsConfig = {
-    origin: [`http://localhost:${PORT}`, 'http://localhost:5173'], 
+    origin: [`http://localhost:${PORT}`, 'http://localhost:5173'],
+    // origin: '*', 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type']
 }

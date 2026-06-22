@@ -2,7 +2,6 @@ import dotenv from 'dotenv'
 import express, { Request, Response, Express } from 'express'
 import cors from 'cors'
 import path from 'path'
-import fs from 'fs'
 import { ServerTodoType } from './types/types'
 import { getDataFromBD, getTodo } from './controllers/controllers'
 import { validate } from './middleware/validation'
@@ -13,6 +12,9 @@ import { corsConfig, helmetConfig, rateLimitConfig } from '../config/security.co
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 import pino from 'pino';
+import { db } from '../src/db/index';
+import { todos } from '../src/db/schema';
+import { eq } from 'drizzle-orm';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -104,14 +106,12 @@ app.get(`/todos/:id`, validate(paramsSchema, "params"), async (req: Request, res
 app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Response): Promise<void> => {
     try {
         const newTask: ServerTodoType = {
-            id: Date.now(),
             title: req.body.title,
-            description: req.body.description,
-            isCompleted: req.body.isCompleted
+            description: req.body.description || '',
+            isCompleted: req.body.isCompleted || false
         }
-        const data = await getDataFromBD()
-        await fs.promises.writeFile(pathToBD, JSON.stringify([ ...data, newTask ], null, 2), "utf-8")
-        res.status(200).json({ message: "Task adding was successfully", task: newTask})
+        const result = await db.insert(todos).values(newTask).returning()
+        res.status(200).json({ message: "Task adding was successfully", task: result[0] })
     } catch (err) {
         logger.error(err)
         res.status(500).json({ error: "Internal server error" })
@@ -121,9 +121,12 @@ app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Res
 app.delete('/todos/:id', validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void> => {
     try {
         const id = Number(req.params.id)
-        const data = await getDataFromBD()
-        const filtred = data.filter(t => t.id !== id)
-        await fs.promises.writeFile(pathToBD, JSON.stringify(filtred, null, 2), "utf-8")
+        const result = await db.delete(todos).where(eq(todos.id, id)).returning()
+
+        if (result.length === 0) {
+            res.status(404).json({ error: 'Todo not found' });
+        }
+
         res.status(200).json({ message: "Task deleting was successfully" })
     } catch (err) {
         logger.error(err)
@@ -136,26 +139,10 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
         
     try {
         const id = Number(req.params.id)
-        const data = await getDataFromBD()
-        const index = data.findIndex(t => t.id === id);
-        
-        if (index === -1) {
-            return res.status(404).json({ error: "Todo not found" });
-        }
-        if (Object.keys(req.body).length === 0) {
-            return res.status(400).json({ error: "No fields to update" });
-        }
-        
-        const current = data[index];
-        const updatedTodo = {
-            ...current,
-            title: req.body.title ?? current.title,
-            description: req.body.description ?? current.description,
-            isCompleted: req.body.isCompleted ?? current.isCompleted
-        };
-        data[index] = updatedTodo;
-        await fs.promises.writeFile(pathToBD, JSON.stringify(data, null, 2), "utf-8")
-        res.status(200).json({ message: "Task patching was successfully", todo: updatedTodo })
+        const { title, description, isCompleted } = req.body;
+        const result = await db.update(todos).set({title, description, isCompleted}).where(eq(todos.id, id)).returning()
+
+        res.status(200).json({ message: "Task patching was successfully", todo: result[0] })
     } catch (err) {
         logger.error(err)
         res.status(500).json({ error: "Internal server error"})
