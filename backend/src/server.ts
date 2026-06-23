@@ -121,11 +121,11 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
     }
 })
 
-app.post('/register', register)
+app.post('/auth/register', register)
 
-app.post('/login', login)
+app.post('/auth/login', login)
 
-app.get('/me', getMe)
+app.get('/auth/me', getMe)
 
 const server = app.listen(process.env.PORT, () => logger.info(`Server is running on localhost:5000`))
 
