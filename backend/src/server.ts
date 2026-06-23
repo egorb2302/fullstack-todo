@@ -11,6 +11,7 @@ import logger from './middleware/logger';
 import { db } from '../src/db/index';
 import { todos } from '../src/db/schema';
 import { eq } from 'drizzle-orm';
+import { authenticate } from './middleware/auth';
 
 export let isShuttingDown = false;
 
@@ -37,6 +38,7 @@ const shutdown = () => {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument))
 
+app.use('/todos', authenticate)
 app.get('/', (req: Request, res: Response) => {
     res.json({ 
         message: 'Todo API is running',
