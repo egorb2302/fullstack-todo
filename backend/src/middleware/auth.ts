@@ -15,8 +15,10 @@ declare global {
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
-        if (!authHeader || authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ message: "Cant get authenticate header" })
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ 
+                message: "No token provided or invalid format" 
+            });
         }
 
         const token = authHeader.split(' ')[1];

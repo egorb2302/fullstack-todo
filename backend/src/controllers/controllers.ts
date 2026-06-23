@@ -5,8 +5,6 @@ import { eq } from 'drizzle-orm';
 import { Response, Request } from "express";
 import logger from '../middleware/logger';
 import { comparePassword, generateToken, hashPassword } from "../utils/auth";
-import { escapeLiteral } from "pg";
-import { compare } from "bcrypt";
 
 export const getDataFromBD = async (): Promise<ServerTodoType[]> => {
     const database = await db.select().from(todos)
