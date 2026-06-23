@@ -5,7 +5,7 @@ const securityConfig = {
         origin: [`http://localhost:${PORT}`, 'http://localhost:5173'],
         // origin: '*', 
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-        allowedHeaders: ['Content-Type']
+        allowedHeaders: ['Content-Type', 'Authorization']
     },
     helmetConfig : {
         contentSecurityPolicy: false,

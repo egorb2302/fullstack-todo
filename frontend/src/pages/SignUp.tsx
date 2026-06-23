@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { z } from "zod";
-import { addUser } from "../api/api";
+import { registerAPI } from "../api/api";
 
 const registerSchema = z.object({
     name: z.string().optional(),
@@ -13,16 +13,20 @@ const registerSchema = z.object({
     { message: "Passwords is compare", path: ['confirmPass']}
 )
 
-type RegisterType = z.infer<typeof registerSchema>
+export type RegisterType = z.infer<typeof registerSchema>
+export type RegisterRequest = Omit<RegisterType, 'confirmPass'>;
 
 export default function Signup() {
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterType>({
         resolver: zodResolver(registerSchema)
     })
 
-    const onSubmit = async (data: RegisterType) => {
-        await addUser(data)
-        console.log('Submitting was successfull!', data)
+    const nav = useNavigate()
+    const onSubmit = async (data: RegisterRequest) => { 
+        const { name, email, password } = data
+        await registerAPI({name, email, password})
+        console.log("Data was successfully added", data)
+        nav('/auth/login')
     }
 
     return (

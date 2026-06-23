@@ -6,7 +6,8 @@ export interface Todo {
 }
 
 export interface User {
-    name?: string,
+    token: string,
+    name: string | undefined,
     email: string,
     password: string
 }

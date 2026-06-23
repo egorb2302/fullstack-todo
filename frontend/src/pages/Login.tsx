@@ -2,13 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { string, z } from "zod";
 import { Link, useNavigate } from 'react-router'
+import { login } from "../api/api";
 
 const loginSchema = z.object({
     email: string(),
     password: string().min(6, "Min length of password is 6 chars")
 })
 
-type LoginType = z.infer<typeof loginSchema>
+export type LoginType = z.infer<typeof loginSchema>
 
 export default function Login() {
     const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<LoginType>({
@@ -23,8 +24,9 @@ export default function Login() {
                 console.log("No email or password")
                 return 
             }
-
-            console.log("Successfull login")
+            
+            await login(data)
+            console.log("Successfull login", data)
             nav('/todos')
         } catch (err) {
             console.error(err)
