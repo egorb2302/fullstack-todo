@@ -7,5 +7,15 @@ export const todos = pgTable('todos', {
     isCompleted: boolean('is_completed').default(false) 
 })
 
+export const users = pgTable('users', {
+    id: serial('id').primaryKey(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+    name: varchar('name', { length: 100 }),
+});
+
 export type Todo = typeof todos.$inferSelect;
 export type NewTodo = typeof todos.$inferSelect;
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
