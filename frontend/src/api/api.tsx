@@ -1,6 +1,7 @@
-import type { Todo } from '../types/types'
+import type { Todo, User } from '../types/types'
 
 const TODOS_URL = "http://localhost:5000/todos"
+const USERS_URL = "http://lcoalhost:5000/users"
 console.log("Запрос к ", TODOS_URL)
 
 export const getAllTodos = async (): Promise<Todo[]> => {
@@ -51,4 +52,22 @@ export const patchTodo = async ({ id, ...task }: { id: number } & Partial<Todo>)
     if (!response.ok) throw new Error(`Error with adding task with body ${JSON.stringify(task)}`)
     const data = await response.json()
     return data
+}
+
+export const getAllUsers = async (): Promise<User[]> => {
+    const response = await fetch(USERS_URL);
+    if (!response.ok) throw new Error("Error of loading all users")
+    const data = await response.json()
+    return data
+}
+
+export const addUser = async (newUser: User): Promise<void> => {
+    const response = await fetch(USERS_URL, {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+        },
+        body: JSON.stringify(newUser)
+    })
+    if (!response.ok) throw new Error("Error of adding a user")
 }

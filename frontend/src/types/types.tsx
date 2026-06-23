@@ -5,6 +5,12 @@ export interface Todo {
     isCompleted: boolean
 }
 
+export interface User {
+    name?: string,
+    email: string,
+    password: string
+}
+
 export interface TodoStore {
     todos: Todo[],
     addTodo: (todo: Todo) => void,
