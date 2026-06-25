@@ -1,6 +1,19 @@
 import { Outlet, Link } from "react-router";
+import { getCurrentUser } from "../api/api";
+import { useQuery } from "@tanstack/react-query";
+import { usernameOutput } from '../utils/username';
+import Unauthorized from "./Unauthorized";
 
 export default function Layout() {
+    const { data: users, isLoading, error } = useQuery({
+        queryKey: ['users'],
+        queryFn: () => getCurrentUser()
+    })
+
+    if (isLoading) return <div>Loading...</div>
+    if (error) throw new Error('Error of profile loading: ', error)
+    if (!users) return <Unauthorized />
+
     return (
         <>
             <div className="min-h-screen bg-[#f5f5f0] p-6">
@@ -11,11 +24,11 @@ export default function Layout() {
                         </Link>
                         
                         <Link to="/profile" className="py-1 px-4 flex text-gray-500 items-center gap-3 duration-100 rounded-2xl hover:bg-amber-100 hover:text-orange-400">
-                            <span className="text-sm font-mono">username</span>
+                            <span className="text-sm font-mono">{users.name}</span>
                             <button className="w-9 h-9 bg-linear-to-r from-orange-400
                                 to-amber-500 rounded-full flex items-center justify-center
                                 text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
-                            U
+                            {usernameOutput(users)}
                             </button>
                         </Link>
                     </div>

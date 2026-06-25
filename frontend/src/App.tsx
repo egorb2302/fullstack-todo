@@ -5,6 +5,7 @@ import Signup from "./pages/SignUp";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
 import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Route path={"/auth/register"} element={<Signup />}/>
       <Route path={"/auth/login"} element={<Login />} />
       <Route path={"/profile"} element={<Profile />} />
+      <Route path='*' element={<NotFound />} />
     </Routes>
   )
 }

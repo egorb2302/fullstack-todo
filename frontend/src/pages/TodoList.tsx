@@ -3,11 +3,12 @@ import { deleteTodo, getAllTodos, patchTodo } from "../api/api";
 import { Link } from "react-router";
 import { useState } from "react";
 import Modal from "../components/TaskModal";
+import Unauthorized from "../components/Unauthorized";
 
 export default function TodoList() {
     const client = useQueryClient();
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
-    const { data, isLoading, error } = useQuery({
+    const { data: todos, isLoading, error } = useQuery({
         queryKey: ['todos'],
         queryFn: async () => getAllTodos()
     })
@@ -39,6 +40,7 @@ export default function TodoList() {
 
     if (isLoading) return <div>Loading...</div>
     if (error) throw new Error(error.message)
+    if (!todos) return <Unauthorized />
 
     return (
         <div className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">
@@ -57,7 +59,7 @@ export default function TodoList() {
                 </div>
                 
                 <div className="space-y-3">
-                {data?.map(todo => (
+                {todos.map(todo => (
                     <div key={todo.id} 
                     className="bg-white border border-gray-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-md transition-all"
                     >
