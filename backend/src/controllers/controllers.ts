@@ -71,8 +71,16 @@ export const login = async (req: Request, res: Response): Promise<Response | und
         }
 
         const token = generateToken(user.id)
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/',
+        });
+
         logger.info({ userId: user.id }, "User logged in");
-        res.status(200).json({ message: "Login successfull", token, user: {
+        res.status(200).json({ message: "Login successfull", user: {
             id: user.id,
             email: user.name,
             name: user.name
@@ -100,3 +108,13 @@ export const getMe = async (req: Request, res: Response): Promise<Response | und
         res.status(500).json({ message: "Internal server error" })
     }
 }
+
+export const logout = async (req: Request, res: Response) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+    });
+    res.json({ message: 'Logged out successfully' });
+};

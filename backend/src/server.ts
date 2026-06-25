@@ -12,6 +12,7 @@ import { db } from '../src/db/index';
 import { todos } from '../src/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { authenticate } from './middleware/auth';
+import cookieParser from 'cookie-parser';
 
 export let isShuttingDown = false;
 
@@ -35,7 +36,7 @@ const shutdown = () => {
         process.exit(1);
     }, 5000);
 };
-
+app.use(cookieParser());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument))
 
 app.use('/todos', authenticate)

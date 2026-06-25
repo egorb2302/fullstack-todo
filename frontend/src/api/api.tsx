@@ -9,10 +9,9 @@ const LOGIN_URL = "http://localhost:5000/auth/login"
 console.log("Запрос к ", TODOS_URL)
 
 export const getAllTodos = async (): Promise<Todo[]> => {
-    const token = getToken();
     const response = await fetch(TODOS_URL, {
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
     });
@@ -22,10 +21,9 @@ export const getAllTodos = async (): Promise<Todo[]> => {
 }
 
 export const getTodo = async (id: number): Promise<Todo> => {
-    const token = getToken();
     const response = await fetch(`${TODOS_URL}/${id}`, {
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
     });
@@ -35,24 +33,22 @@ export const getTodo = async (id: number): Promise<Todo> => {
 }
 
 export const deleteTodo = async (id: number): Promise<void> => {
-    const token = getToken();
     const response = await fetch(`${TODOS_URL}/${id}`, {
+        credentials: 'include',
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
         }
     })
     if (!response.ok) throw new Error(`Error of deleting todo with id ${id}`)
 }
 
 export const addTodo = async (task: Omit<Todo, "id">): Promise<Todo> => {
-    const token = getToken();
     const response = await fetch(TODOS_URL, {
+        credentials: 'include',
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(task)
     })
@@ -62,12 +58,11 @@ export const addTodo = async (task: Omit<Todo, "id">): Promise<Todo> => {
 }
 
 export const patchTodo = async ({ id, ...task }: { id: number } & Partial<Todo>): Promise<Todo> => {
-    const token = getToken();
     const response = await fetch(`${TODOS_URL}/${id}`, {
+        credentials: 'include',
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(task)
     })
@@ -78,6 +73,7 @@ export const patchTodo = async ({ id, ...task }: { id: number } & Partial<Todo>)
 
 export const registerAPI = async (newUser: RegisterRequest): Promise<void> => {
     const response = await fetch(REGISTER_URL, {
+        credentials: 'include',
         method: "POST",
         headers: {
             "Content-type": "application/json",
@@ -89,6 +85,7 @@ export const registerAPI = async (newUser: RegisterRequest): Promise<void> => {
 
 export const login = async (user: LoginType): Promise<void> => {
     const response = await fetch(LOGIN_URL, {
+        credentials: 'include',
         method: "POST",
         headers: {
             "Content-type": "application/json",
@@ -98,21 +95,12 @@ export const login = async (user: LoginType): Promise<void> => {
     if (!response.ok) throw new Error("Error of adding a user")
     
     const data = await response.json()
-
-    localStorage.setItem('token', data.token)
-    localStorage.setItem('user', JSON.stringify(data.user))
-
     return data.user
 }
 
 export const getCurrentUser = async (): Promise<ProfileType | null> => {
-    const token = getToken()
-    if (!token) return null
-
     const response = await fetch('http://localhost:5000/auth/me', {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
+        credentials: 'include',
     })
 
     if (response.ok) {
