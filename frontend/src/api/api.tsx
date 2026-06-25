@@ -1,6 +1,6 @@
 import type { LoginType } from '../pages/Login';
 import type { RegisterRequest } from '../pages/SignUp';
-import type { Todo } from '../types/types'
+import type { ProfileType, Todo } from '../types/types'
 import { getToken } from '../utils/token';
 
 const TODOS_URL = "http://localhost:5000/todos"
@@ -105,11 +105,11 @@ export const login = async (user: LoginType): Promise<void> => {
     return data.user
 }
 
-export const getCurrentUser = async () => {
-    const token = localStorage.getItem('token')
+export const getCurrentUser = async (): Promise<ProfileType | null> => {
+    const token = getToken()
     if (!token) return null
 
-    const response = await fetch('/auth/me', {
+    const response = await fetch('http://localhost:5000/auth/me', {
         headers: {
             "Authorization": `Bearer ${token}`
         }

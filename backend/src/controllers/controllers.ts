@@ -90,7 +90,7 @@ export const getMe = async (req: Request, res: Response): Promise<Response | und
             return res.status(401).json({ error: "Unauthorized" })
         }
 
-        res.status(200).json({
+        res.json({
             id: user.id,
             email: user.email,
             name: user.name,

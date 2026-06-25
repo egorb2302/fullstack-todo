@@ -12,6 +12,12 @@ export interface User {
     password: string
 }
 
+export interface ProfileType {
+    name: string,
+    email: string,
+    id: number | string,
+}
+
 export interface TodoStore {
     todos: Todo[],
     addTodo: (todo: Todo) => void,

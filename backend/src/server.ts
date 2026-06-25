@@ -149,7 +149,7 @@ app.post('/auth/register', register)
 
 app.post('/auth/login', login)
 
-app.get('/auth/me', getMe)
+app.get('/auth/me', authenticate, getMe)
 
 const server = app.listen(process.env.PORT, () => logger.info(`Server is running on localhost:5000`))
 
