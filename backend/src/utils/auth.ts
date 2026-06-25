@@ -26,7 +26,7 @@ export const verifyToken = (token: string): { userId: number } => {
     return jwt.verify(token, JWT_SECRET) as { userId: number}
 }
 
-// token utils for access-refresh security of app
+// token utils with access-refresh security of app
 export const generateAccessToken = (userId: number): string => {
     return jwt.sign(
         { userId },
