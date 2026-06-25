@@ -23,8 +23,12 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
         const token = authHeader.split(' ')[1];
         const decoded = verifyToken(token)
+        const userId = Number(decoded.userId)
+        if (isNaN(userId)) {
+            return res.status(401).json({ message: "Invalid user ID in token" });
+        }
 
-        const result = await db.select().from(users).where(eq(users.id, decoded.userId));
+        const result = await db.select().from(users).where(eq(users.id, userId));
         if (result.length === 0) {
             return res.status(401).json({ message: "Cant get find decoded user in db" })
         }

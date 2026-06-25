@@ -10,7 +10,7 @@ import { createSchema, paramsSchema, taskSchema } from './schemas/todoSchemas';
 import logger from './middleware/logger';
 import { db } from '../src/db/index';
 import { todos } from '../src/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { authenticate } from './middleware/auth';
 
 export let isShuttingDown = false;
@@ -53,8 +53,9 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/todos', async (req: Request, res: Response): Promise<void | Response> => {
-    try {
-        res.send(await getDataFromBD())
+    try {  
+        const result = await getDataFromBD(req, res)
+        res.json(result)
     } catch (err) {
         logger.error(err)
         return
@@ -64,12 +65,15 @@ app.get('/todos', async (req: Request, res: Response): Promise<void | Response> 
 app.get(`/todos/:id`, validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void | Response> => {
     try {
         const id = Number(req.params.id)
+        const userId = req.user.id
+        const existing = await db.select().from(todos).where(and(eq(todos.id, id), eq(todos.userId, userId)))
+        if (existing.length === 0) {
+            return res.status(404).json({ message: "Todo not found" })
+        }
         const todo = await getTodo(id)
-
         if (!todo) {
             return res.status(404).json({ error: "Cant get todo on server" })
         }
-
         res.json(todo)
     } catch (err) {
         logger.error(err)
@@ -79,13 +83,22 @@ app.get(`/todos/:id`, validate(paramsSchema, "params"), async (req: Request, res
 
 app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Response): Promise<void> => {
     try {
+        console.log('🔍 req.user in POST handler:', req.user); 
+        console.log('🔍 req.user.id:', req.user?.id);   
+        const { title, description, isCompleted } = req.body
         const newTask: ServerTodoType = {
-            title: req.body.title,
-            description: req.body.description || '',
-            isCompleted: req.body.isCompleted || false
+            title: title,
+            description: description || '',
+            isCompleted: isCompleted || false,
+            userId: req.user.id
         }
-        const result = await db.insert(todos).values(newTask).returning()
-        res.status(200).json({ message: "Task adding was successfully", task: result[0] })
+        try {
+    const result = await db.insert(todos).values(newTask).returning();
+    console.log('✅ Insert success:', result);
+} catch (insertErr) {
+    console.error('❌ Drizzle insert error:', insertErr);
+    throw insertErr;
+}
     } catch (err) {
         logger.error(err)
         res.status(500).json({ error: "Internal server error" })
@@ -95,12 +108,16 @@ app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Res
 app.delete('/todos/:id', validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void> => {
     try {
         const id = Number(req.params.id)
-        const result = await db.delete(todos).where(eq(todos.id, id)).returning()
+        const userId = req.user.id
+        const existing = await db.select().from(todos).where(and(eq(todos.id, id), eq(todos.userId, userId)))
+        if (existing.length === 0) {
+            res.status(404).json({ message: "Todo not found" })
+        }
 
+        const result = await db.delete(todos).where(eq(todos.id, id)).returning()
         if (result.length === 0) {
             res.status(404).json({ error: 'Todo not found' });
         }
-
         res.status(200).json({ message: "Task deleting was successfully" })
     } catch (err) {
         logger.error(err)
@@ -113,9 +130,14 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
         
     try {
         const id = Number(req.params.id)
+        const userId = req.user.id
         const { title, description, isCompleted } = req.body;
-        const result = await db.update(todos).set({title, description, isCompleted}).where(eq(todos.id, id)).returning()
+        const existing = await db.select().from(todos).where(and(eq(todos.id, id), eq(todos.userId, userId)))
+        if (existing.length === 0) {
+            return res.status(404).json({ message: "Todo not found" })
+        }
 
+        const result = await db.update(todos).set({title, description, isCompleted}).where(eq(todos.id, id)).returning()
         res.status(200).json({ message: "Task patching was successfully", todo: result[0] })
     } catch (err) {
         logger.error(err)

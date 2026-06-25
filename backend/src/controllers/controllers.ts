@@ -6,9 +6,10 @@ import { Response, Request } from "express";
 import logger from '../middleware/logger';
 import { comparePassword, generateToken, hashPassword } from "../utils/auth";
 
-export const getDataFromBD = async (): Promise<ServerTodoType[]> => {
-    const database = await db.select().from(todos)
-    return database
+export const getDataFromBD = async (req: Request, res: Response): Promise<ServerTodoType[]> => {
+    const userId = req.user.id;
+    const result = await db.select().from(todos).where(eq(todos.userId, userId))
+    return result
 }
 
 export const getTodo = async (id: number): Promise<ServerTodoType | undefined> => {

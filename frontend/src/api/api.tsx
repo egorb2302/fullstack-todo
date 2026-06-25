@@ -35,20 +35,24 @@ export const getTodo = async (id: number): Promise<Todo> => {
 }
 
 export const deleteTodo = async (id: number): Promise<void> => {
+    const token = getToken();
     const response = await fetch(`${TODOS_URL}/${id}`, {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         }
     })
     if (!response.ok) throw new Error(`Error of deleting todo with id ${id}`)
 }
 
 export const addTodo = async (task: Omit<Todo, "id">): Promise<Todo> => {
+    const token = getToken();
     const response = await fetch(TODOS_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(task)
     })
@@ -58,10 +62,12 @@ export const addTodo = async (task: Omit<Todo, "id">): Promise<Todo> => {
 }
 
 export const patchTodo = async ({ id, ...task }: { id: number } & Partial<Todo>): Promise<Todo> => {
+    const token = getToken();
     const response = await fetch(`${TODOS_URL}/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(task)
     })
@@ -74,7 +80,7 @@ export const registerAPI = async (newUser: RegisterRequest): Promise<void> => {
     const response = await fetch(REGISTER_URL, {
         method: "POST",
         headers: {
-            "Content-type": "application/json"
+            "Content-type": "application/json",
         },
         body: JSON.stringify(newUser)
     });

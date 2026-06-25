@@ -1,7 +1,8 @@
-import { boolean, pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { boolean, pgTable, serial, varchar, integer } from "drizzle-orm/pg-core";
 
 export const todos = pgTable('todos', {
     id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id).notNull(),
     title: varchar('title', { length: 100 }).notNull(),
     description: varchar('description', { length: 500 }),
     isCompleted: boolean('is_completed').default(false) 
