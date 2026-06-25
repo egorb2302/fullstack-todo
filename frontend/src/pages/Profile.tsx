@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentUser } from "../api/api";
+import { getCurrentUser, logout } from "../api/api";
 import { useNavigate } from "react-router";
-import { logout } from "../utils/logout";
 import { usernameOutput } from "../utils/username";
 import Unauthorized from "../components/Unauthorized";
 import { Link } from 'react-router';
@@ -13,8 +12,8 @@ export default function Profile() {
     })
     const nav = useNavigate()
 
-    const logoutHandler = () => {
-        logout()
+    const logoutHandler = async () => {
+        await logout()
         nav('/auth/login')
     }
 

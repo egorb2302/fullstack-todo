@@ -1,7 +1,6 @@
 import type { LoginType } from '../pages/Login';
 import type { RegisterRequest } from '../pages/SignUp';
-import type { ProfileType, Todo } from '../types/types'
-import { getToken } from '../utils/token';
+import type { ProfileType, Todo } from '../types/types';
 
 const TODOS_URL = "http://localhost:5000/todos"
 const REGISTER_URL = "http://localhost:5000/auth/register"
@@ -109,4 +108,12 @@ export const getCurrentUser = async (): Promise<ProfileType | null> => {
     }
 
     return null
+}
+
+export const logout = async (): Promise<void> => {
+    const response = await fetch('http://localhost:5000/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+    })
+    if (!response.ok) throw new Error('Error of logout on client')
 }

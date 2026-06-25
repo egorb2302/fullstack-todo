@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import express, { Request, Response, Express } from 'express'
 import { securityMiddleware } from './middleware/security';
 import { ServerTodoType } from './types/types'
-import { getDataFromBD, getMe, getTodo, login, register } from './controllers/controllers'
+import { getDataFromBD, getMe, getTodo, login, logout, register } from './controllers/controllers'
 import { validate } from './middleware/validation'
 import swaggerUi from 'swagger-ui-express';
 import { openApiDocument } from './openapi';
@@ -151,6 +151,8 @@ app.post('/auth/register', register)
 app.post('/auth/login', login)
 
 app.get('/auth/me', authenticate, getMe)
+
+app.post('/auth/logout', logout)
 
 const server = app.listen(process.env.PORT, () => logger.info(`Server is running on localhost:5000`))
 
