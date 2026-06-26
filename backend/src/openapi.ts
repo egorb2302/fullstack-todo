@@ -1,3 +1,5 @@
+import { desc } from "drizzle-orm";
+
 export const openApiDocument = {
     openapi: '3.0.0',
     info: {
@@ -94,6 +96,99 @@ export const openApiDocument = {
                     404: { description: 'Not found' },
                     500: { description: 'Internal server error' }
                 }
+            }
+        },
+        '/auth/register': {
+            post: {
+                summary: 'Sending register data on server',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                required: ['title'],
+                                properties: {
+                                    name: { type: 'string', maxLength: 100 },
+                                    email: { type: 'string', maxLength: 500 },
+                                    password: { type: 'string', minLength: 6 }
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    201: { description: 'Account created' },
+                    400: { description: "Email and password are required"},
+                    500: { description: 'Internal server error'}
+                }
+            }
+        },
+        '/auth/login': {
+            post: {
+                summary: 'Login with your data from server',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                required: ['title'],
+                                properties: {
+                                    email: { type: 'string', maxLength: 500 },
+                                    password: { type: 'string', minLength: 6 }
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    201: { description: 'Successfully login' },
+                    400: { description: "Invalid email or password"},
+                    500: { description: 'Internal server error'}
+                }
+            }
+        },
+        '/auth/me': {
+            get: {
+                summary: 'Get current state of your token',
+                responses: {
+                    200: { description: 'Successfully' },
+                    401: { description: 'Unathorized' },
+                    500: { description: 'Internal server error' }
+                }
+            },
+        },
+        '/auth/logout': {
+            post: {
+                summary: 'Logout request',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                required: ['title'],
+                            }
+                        }
+                    }
+                },
+            }
+        },
+        '/auth/refresh': {
+            post: {
+                summary: 'Token refresh',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                required: ['title'],
+                            }
+                        }
+                    }
+                },
             }
         }
     }
