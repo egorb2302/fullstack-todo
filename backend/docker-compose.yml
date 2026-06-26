@@ -10,6 +10,30 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  app:
+    build: .
+    container_name: todo_app
+    ports: 
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/testdb
+      JWT_SECRET: a7f3d9e2b8c1a5f4e3d2c1b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0
+      REFRESH_SECRET: 7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0d1c0b9a8f7e6d5c4b3a2fb7a6f5e4d3c2b1a0f9e82c1b9a8f7e6d5c4b
+      ACCESS_SECRET: a7f3d9e2b8c1a5f4e3d2c1b9a8f7e6d5c4b3a2f1e0d9c8b4e3d2c1b9a8f7e3c2b1a0f9e8d74f9d7c6b5a4f3e2d1c0
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+    command: ["sh", "-c", "node node_modules/drizzle-kit/bin.cjs migrate && node dist/server.js"]
 volumes:
   postgres_data:

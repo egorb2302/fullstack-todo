@@ -8,12 +8,12 @@ import swaggerUi from 'swagger-ui-express';
 import { openApiDocument } from './openapi';
 import { createSchema, paramsSchema, taskSchema } from './schemas/todoSchemas';
 import logger from './middleware/logger';
-import { db } from '../src/db/index';
-import { todos } from '../src/db/schema';
+import { db } from './db/index';
+import { todos } from './db/schema';
 import { and, eq } from 'drizzle-orm';
 import { authenticate } from './middleware/auth';
 import cookieParser from 'cookie-parser';
-import { env } from '../config/env';
+import { env } from './config/env';
 
 export let isShuttingDown = false;
 
