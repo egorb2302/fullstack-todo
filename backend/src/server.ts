@@ -13,6 +13,7 @@ import { todos } from '../src/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { authenticate } from './middleware/auth';
 import cookieParser from 'cookie-parser';
+import { env } from '../config/env';
 
 export let isShuttingDown = false;
 
@@ -154,7 +155,7 @@ app.get('/auth/me', authenticate, getMe)
 
 app.post('/auth/logout', logout)
 
-const server = app.listen(process.env.PORT, () => logger.info(`Server is running on localhost:5000`))
+const server = app.listen(env.PORT, () => logger.info(`Server is running on localhost:${env.PORT}`))
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

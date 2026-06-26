@@ -1,4 +1,6 @@
-const PORT = process.env.PORT || "5000"
+import { env } from "./env";
+
+const PORT = env.PORT
 
 const securityConfig = {
     corsConfig : {

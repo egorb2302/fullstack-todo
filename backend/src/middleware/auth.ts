@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyAccessToken, verifyToken } from "../utils/auth";
+import { verifyAccessToken } from "../utils/auth";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { eq } from 'drizzle-orm';
