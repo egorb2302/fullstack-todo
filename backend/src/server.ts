@@ -18,7 +18,7 @@ import { env } from './config/env';
 export let isShuttingDown = false;
 
 dotenv.config()
-const app: Express = express()
+export const app: Express = express()
 
 app.use(express.urlencoded({ extended: true }))
 app.use(securityMiddleware)
@@ -95,12 +95,13 @@ app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Res
             userId: req.user.id
         }
         try {
-    const result = await db.insert(todos).values(newTask).returning();
-    console.log('✅ Insert success:', result);
-} catch (insertErr) {
-    console.error('❌ Drizzle insert error:', insertErr);
-    throw insertErr;
-}
+            const result = await db.insert(todos).values(newTask).returning();
+            res.status(201).json({ message: 'Task successfully added', task: result[0] })
+            console.log('✅ Insert success:', result);
+        } catch (insertErr) {
+            console.error('❌ Drizzle insert error:', insertErr);
+            throw insertErr;
+        }
     } catch (err) {
         logger.error(err)
         res.status(500).json({ error: "Internal server error" })

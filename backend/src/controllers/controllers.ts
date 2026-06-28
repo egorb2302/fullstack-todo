@@ -26,7 +26,7 @@ export const register = async (req: Request, res: Response): Promise<Response | 
 
         const existing = await db.select().from(users).where(eq(users.email, email))
         if (existing.length > 0) {
-            res.status(400).json({ message: "User already exists" })
+            return res.status(400).json({ message: "User already exists" })
         }
 
         const hashed = await hashPassword(password)
@@ -58,9 +58,9 @@ export const register = async (req: Request, res: Response): Promise<Response | 
         });
 
         logger.info({ userId: users.id, email: users.email }, "User registred")
-        res.status(201).json({ message: "User was successfully registred", user: {
+        return res.status(201).json({ message: "User was successfully registred", user: {
             id: user.id,
-            email: user.name,
+            email: user.email,
             name: user.name
         } })
 
@@ -108,9 +108,9 @@ export const login = async (req: Request, res: Response): Promise<Response | und
         });
 
         logger.info({ userId: user.id }, "User logged in");
-        res.status(200).json({ message: "Login successfull", user: {
+        return res.status(200).json({ message: "Login successfull", user: {
             id: user.id,
-            email: user.name,
+            email: user.email,
             name: user.name
         }})
     } catch (err) {
