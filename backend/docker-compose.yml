@@ -35,7 +35,7 @@ services:
     ports: 
       - "5000:5000"
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 5000
       DATABASE_URL: postgresql://postgres:postgres@db:5432/testdb
       REDIS_URL: redis://redis:6379
@@ -47,9 +47,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    volumes:
-      - ./src:/app/src
-      - ./package.json:/app/package.json
     command: ["sh", "-c", "node node_modules/drizzle-kit/bin.cjs migrate && node dist/server.js"]
 volumes:
   postgres_data:
