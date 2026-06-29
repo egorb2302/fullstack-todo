@@ -14,7 +14,10 @@ const envSchma = z.object({
     ),
     JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
     REFRESH_SECRET: z.string().min(32, "REFRESH_SECRET must be at least 32 characters"),
-    ACCESS_SECRET: z.string().min(32, "ACCESS_SECRET must be at least 32 characters")
+    ACCESS_SECRET: z.string().min(32, "ACCESS_SECRET must be at least 32 characters"),
+    REDIS_URL: z.string().url('REDIS_URL must be a valid URL').refine(
+        (url) => url.startsWith('redis://'),
+    )
 })
 
 const parseEnv = () => {
