@@ -8,7 +8,7 @@ In this project, i try to create a fullstack application with it own server and 
 
 **Client:** TypeScript, React, TanStack, Zod, Tailwind CSS
 
-**Server:** Node.js + Express, PostgreSQL + Drizzle ORM ,Swagger UI for REST API, JWT Auth, Docker, Vitest
+**Server:** Node.js + Express, PostgreSQL + Drizzle ORM ,Swagger UI for REST API, JWT Auth, Docker, Vitest, Redis
 
 
 ## How to run
