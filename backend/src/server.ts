@@ -14,6 +14,8 @@ import { and, eq } from 'drizzle-orm';
 import { authenticate } from './middleware/auth';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env';
+import { cache } from './middleware/cache';
+import { invalidateCache } from './utils/invalidate';
 
 export let isShuttingDown = false;
 
@@ -54,7 +56,7 @@ app.get('/', (req: Request, res: Response) => {
     });
 });
 
-app.get('/todos', async (req: Request, res: Response): Promise<void | Response> => {
+app.get('/todos', cache , async (req: Request, res: Response): Promise<void | Response> => {
     try {  
         const result = await getDataFromBD(req, res)
         res.json(result)
@@ -64,7 +66,7 @@ app.get('/todos', async (req: Request, res: Response): Promise<void | Response> 
     }
 })
 
-app.get(`/todos/:id`, validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void | Response> => {
+app.get(`/todos/:id`, cache ,validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void | Response> => {
     try {
         const id = Number(req.params.id)
         const userId = req.user.id
@@ -96,6 +98,7 @@ app.post('/todos', validate(createSchema, "body"), async (req: Request, res: Res
         }
         try {
             const result = await db.insert(todos).values(newTask).returning();
+            await invalidateCache('cache:/todos*')
             res.status(201).json({ message: 'Task successfully added', task: result[0] })
             console.log('✅ Insert success:', result);
         } catch (insertErr) {
@@ -121,6 +124,7 @@ app.delete('/todos/:id', validate(paramsSchema, "params"), async (req: Request, 
         if (result.length === 0) {
             res.status(404).json({ error: 'Todo not found' });
         }
+        await invalidateCache(`cache:/todos/${id}*`)
         res.status(200).json({ message: "Task deleting was successfully" })
     } catch (err) {
         logger.error(err)
@@ -141,6 +145,7 @@ app.patch('/todos/:id', validate(paramsSchema, "params"), validate(taskSchema, "
         }
 
         const result = await db.update(todos).set({title, description, isCompleted}).where(eq(todos.id, id)).returning()
+        await invalidateCache(`cache:/todos/${id}*`)
         res.status(200).json({ message: "Task patching was successfully", todo: result[0] })
     } catch (err) {
         logger.error(err)
