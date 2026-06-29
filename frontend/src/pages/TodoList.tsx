@@ -41,6 +41,7 @@ export default function TodoList() {
     if (isLoading) return <div>Loading...</div>
     if (error) throw new Error(error.message)
     if (!todos) return <Unauthorized />
+    if (todos.length === 0) return <div>Have no tasks</div>
 
     return (
         <div className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">

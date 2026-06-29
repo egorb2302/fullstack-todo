@@ -11,6 +11,7 @@ import logger from './middleware/logger';
 import { db } from './db/index';
 import { todos } from './db/schema';
 import { and, eq } from 'drizzle-orm';
+import { connectRedis } from '../src/redis/index';
 import { authenticate } from './middleware/auth';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env';
@@ -56,7 +57,7 @@ app.get('/', (req: Request, res: Response) => {
     });
 });
 
-app.get('/todos', cache , async (req: Request, res: Response): Promise<void | Response> => {
+app.get('/todos', cache() , async (req: Request, res: Response): Promise<void | Response> => {
     try {  
         const result = await getDataFromBD(req, res)
         res.json(result)
@@ -66,7 +67,7 @@ app.get('/todos', cache , async (req: Request, res: Response): Promise<void | Re
     }
 })
 
-app.get(`/todos/:id`, cache ,validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void | Response> => {
+app.get(`/todos/:id`, cache() ,validate(paramsSchema, "params"), async (req: Request, res: Response): Promise<void | Response> => {
     try {
         const id = Number(req.params.id)
         const userId = req.user.id
