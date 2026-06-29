@@ -17,13 +17,18 @@ services:
       retries: 5
 
   redis: 
-    image: redis:apline
+    image: redis:alp  ine
     container_name: todo_redis
     ports: 
       - "6379:6379"
     volumes:
       - redis_data:/data
-      
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
     container_name: todo_app
@@ -39,9 +44,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ./src:/app/src
       - ./package.json:/app/package.json
     command: ["sh", "-c", "node node_modules/drizzle-kit/bin.cjs migrate && node dist/server.js"]
 volumes:
   postgres_data:
+  redis_data:
