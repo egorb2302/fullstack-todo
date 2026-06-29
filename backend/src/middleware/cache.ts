@@ -2,11 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import logger from "./logger";
 import { redisClient } from "../redis/index";
 
-const DEFAULT_TTL = 60;
+const DEFAULT_TTL = 10;
 
 export const cache = (ttl: number = DEFAULT_TTL) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         if (req.method !== "GET") {
+            console.log("not GET, skipping cache")
             return next()
         }
 

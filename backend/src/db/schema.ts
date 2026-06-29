@@ -5,7 +5,7 @@ export const todos = pgTable('todos', {
     userId: integer('user_id').references(() => users.id).notNull(),
     title: varchar('title', { length: 100 }).notNull(),
     description: varchar('description', { length: 500 }),
-    isCompleted: boolean('is_completed').default(false) 
+    isCompleted: boolean('is_completed').default(false).notNull() 
 })
 
 export const users = pgTable('users', {

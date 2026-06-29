@@ -4,8 +4,10 @@ import { Link } from "react-router";
 import { useState } from "react";
 import Modal from "../components/TaskModal";
 import Unauthorized from "../components/Unauthorized";
+import NoTasks from "../components/HaveNoTasks";
 
 export default function TodoList() {
+    console.log('🔥 TodoList rendered');
     const client = useQueryClient();
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
     const { data: todos, isLoading, error } = useQuery({
@@ -35,13 +37,13 @@ export default function TodoList() {
 
     const handleModal = async (): Promise<void> => {
         setModalIsOpen(false)
-        location.reload()
+        client.invalidateQueries({ queryKey: ['todos'] });
     }
 
     if (isLoading) return <div>Loading...</div>
     if (error) throw new Error(error.message)
     if (!todos) return <Unauthorized />
-    if (todos.length === 0) return <div>Have no tasks</div>
+    if (todos.length === 0) return <NoTasks />
 
     return (
         <div className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">
@@ -70,10 +72,10 @@ export default function TodoList() {
                         <p className="text-gray-500 mt-1">{todo.description}</p>
                         </div>
                         <div className={`flex items-center gap-1.5 text-sm font-mono
-                        ${todo.isCompleted ? 'text-green-600' : 'text-amber-600'}`}
+                        ${todo.isCompleted === true ? 'text-green-600' : 'text-amber-600'}`}
                         >
                         <span className={`w-2 h-2 rounded-full ${todo.isCompleted ? 'bg-green-500' : 'bg-amber-500'}`}></span>
-                        {todo.isCompleted ? "Completed" : "In Progress"}
+                        {todo.isCompleted === true ? "Completed" : "In Progress"}
                         </div>
                     </div>
                     

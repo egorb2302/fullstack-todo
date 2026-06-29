@@ -47,7 +47,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["sh", "-c", "node node_modules/drizzle-kit/bin.cjs migrate && node dist/server.js"]
+    command: ["node", "dist/server.js"]
 volumes:
   postgres_data:
   redis_data:
