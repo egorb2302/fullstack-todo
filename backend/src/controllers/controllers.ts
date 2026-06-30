@@ -4,7 +4,12 @@ import { NewUser, todos, users } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import { Response, Request } from "express";
 import logger from '../middleware/logger';
+import { getQueueStats } from '../queues/monitor';
+import { testQueue } from '../queues/seed';
 import { comparePassword, generateAccessToken, generateRefreshToken, hashPassword, verifyRefreshToken } from "../utils/auth";
+import { redisClient } from "../redis";
+
+let isTested = false;
 
 export const getDataFromBD = async (req: Request, res: Response): Promise<ServerTodoType[]> => {
     const userId = req.user.id;
@@ -173,7 +178,7 @@ export const getMe = async (req: Request, res: Response): Promise<Response | und
     }
 }
 
-export const logout = async (req: Request, res: Response) => {
+export const logout = async (req: Request, res: Response): Promise<Response | void> => {
     res.clearCookie('accessToken', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -190,3 +195,31 @@ export const logout = async (req: Request, res: Response) => {
 
     res.json({ message: 'Logged out successfully' });
 };
+
+export const queue = async (req: Request, res: Response): Promise<Response | void> => {
+    try {
+        if (!isTested) {
+            await testQueue().catch(console.error);
+            isTested = true;
+        }
+        const cached = await redisClient.get('report:latest');
+        if (cached) {
+            return res.json(JSON.parse(cached))
+        }
+
+        const totalTasks = await db.$count(db.select().from(todos));
+        const totalUsers = await db.$count(db.select().from(users));
+        
+        const report = {
+            totalTasks,
+            totalUsers,
+            timestamp: new Date().toISOString(),
+        };
+
+        const stats = await getQueueStats(report)
+        return res.json(stats)
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ error: "internal server error" })
+    }
+}

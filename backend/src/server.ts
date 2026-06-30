@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import express, { Request, Response, Express, NextFunction } from 'express'
 import { securityMiddleware } from './middleware/security';
 import { ServerTodoType } from './types/types'
-import { getDataFromBD, getMe, getTodo, login, logout, register } from './controllers/controllers'
+import { getDataFromBD, getMe, getTodo, login, logout, queue, register } from './controllers/controllers'
 import { validate } from './middleware/validation'
 import swaggerUi from 'swagger-ui-express';
 import { openApiDocument } from './openapi';
@@ -16,6 +16,7 @@ import cookieParser from 'cookie-parser';
 import { env } from './config/env';
 import { cache } from './middleware/cache';
 import { invalidateCache } from './utils/invalidate';
+import './queues/workers/reportWorker';
 
 export let isShuttingDown = false;
 
@@ -161,7 +162,9 @@ app.get('/auth/me', authenticate, getMe)
 
 app.post('/auth/logout', logout)
 
-const server = app.listen(env.PORT, () => logger.info(`Server is running on localhost:${env.PORT}`))
+app.get('/queue/stats', queue)
+
+const server = app.listen(env.PORT, () => {logger.info(`Server is running on localhost:${env.PORT}`)})
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
