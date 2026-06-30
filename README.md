@@ -26,5 +26,15 @@ In this project, i try to create a fullstack application with it own server and 
   cd frontend
   npm install
   npm run dev
-```    
+```
+
+## Server with bun ( for faster deps uploading )
+
+```
+  cd backend
+  bun install
+  bun run docker:build
+  bun run docker:up
+```
+
 then, switch to root dir and run project
