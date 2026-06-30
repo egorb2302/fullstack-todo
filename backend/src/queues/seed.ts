@@ -1,12 +1,14 @@
+import { db } from '../db';
+import { todos, users } from '../db/schema';
 import { reportQueue } from './queue';
 
 export const testQueue = async () => {
     console.log('📤 Adding test job to queue...');
     
     const job = await reportQueue.add('test-job', {
-        test: true,
-        message: 'Hello from BullMQ',
-        timestamp: new Date().toISOString(),
+        totalTasks: await db.$count(db.select().from(todos)),
+        totalUsers: await db.$count(db.select().from(users)),
+        timestamp: `Recieved at ${new Date()}`,
     });
     
     console.log('✅ Job added:', job.id);

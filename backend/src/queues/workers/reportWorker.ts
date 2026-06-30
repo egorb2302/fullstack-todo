@@ -7,29 +7,36 @@ export const reportWorker = new Worker(
     async (job) => {
         console.log('Generating report ', job.id)
 
-        const { userId, startDate, endDate } = job.data
-
-        const report = {
-            userId,
-            period: `${startDate} - ${endDate}`,
-            taskCompleted: Math.floor(Math.random() * 100),
-            totalTasks: Math.floor(Math.random() * 200),
-            generatedAt: new Date()
-        }
+        const { totalTasks, totalUsers, timestamp } = job.data
 
         await redisClient.set(
-            `report:${userId}:${Date.now()}`,
-            JSON.stringify(report),
-            { EX: 3600 }
+            'report:latest',
+            JSON.stringify({
+                totalTasks,
+                totalUsers,
+                timestamp,
+                generateAt: new Date().toISOString()
+            }),
+            { EX: 1800 }
         )
 
-        return report
+        await redisClient.lPush(
+            'report:history',
+            JSON.stringify({
+                totalTasks,
+                totalUsers,
+                timestamp,
+                generatedAt: new Date().toISOString(),
+            })
+        );
+
+        return { success: true }
     },
     { connection: connection }
 )
 
 reportWorker.on('completed', (job) => {
-    console.log(`✅ Job ${job.id} completed successfully`);
+    console.log(`✅ Job ${job.id} completed successfully, data: `, job.data);
 });
 
 reportWorker.on('failed', (job, err) => {
