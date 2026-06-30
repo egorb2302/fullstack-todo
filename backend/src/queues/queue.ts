@@ -2,7 +2,7 @@ import { Queue } from "bullmq";
 import { env } from "../config/env";
 
 export const connection  = {
-    host: 'localhost',
+    host: env.REDIS_HOST,
     port: Number(env.REDIS_URL.slice(-4))
 }
 

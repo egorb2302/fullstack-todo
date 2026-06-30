@@ -17,7 +17,8 @@ const envSchma = z.object({
     ACCESS_SECRET: z.string().min(32, "ACCESS_SECRET must be at least 32 characters"),
     REDIS_URL: z.string().url('REDIS_URL must be a valid URL').refine(
         (url) => url.startsWith('redis://'),
-    )
+    ).default('redis://redis:6379'),
+    REDIS_HOST: z.string()
 })
 
 const parseEnv = () => {

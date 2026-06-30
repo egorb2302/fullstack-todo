@@ -5,6 +5,8 @@ WORKDIR /backend
 COPY package*.json ./
 RUN npm ci
 
+ARG CACHEBUST=1
+
 COPY . .
 RUN npm run build
 

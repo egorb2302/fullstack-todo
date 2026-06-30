@@ -1,13 +1,11 @@
-// src/redis/index.ts
 import { createClient } from 'redis';
 import { env } from '../config/env';
 import logger from '../middleware/logger';
 
-console.log('🔍 Connecting to Redis at:', env.REDIS_URL);
-
 const redisClient = createClient({
-    url: env.REDIS_URL,
     socket: {
+        host: env.REDIS_HOST,
+        port: Number(env.REDIS_URL.slice(-4)),
         connectTimeout: 5000,
         reconnectStrategy: (retries) => {
             console.log(`🔄 Redis reconnect attempt ${retries}`);
@@ -21,9 +19,10 @@ const redisClient = createClient({
 });
 
 redisClient.on('error', (err) => {
-    console.error('❌ Redis client error:', err.message);
-    console.error('❌ Redis error stack:', err.stack);
-    logger.error({ err }, 'Redis client error');
+    if (redisClient.isReady) {
+        console.error('❌ Redis client error:', err.message);
+        logger.error({ err }, 'Redis client error');
+    }
 });
 
 redisClient.on('connect', () => {
@@ -62,13 +61,13 @@ async function connectRedis() {
     } catch (err) {
         console.error('❌ Redis connection error:', err);
         console.error('❌ Redis error message:', err);
-        logger.error({ err }, 'Redis connection failed');
-        throw err;
+        return 
     }
 }
 
 connectRedis().catch((err) => {
     console.warn('⚠️ Redis connection failed, continuing without cache:', err.message);
+    return null
 });
 
 export { redisClient, connectRedis };
