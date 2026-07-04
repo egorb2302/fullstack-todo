@@ -13,6 +13,8 @@ export const testQueue = async () => {
     
     console.log('✅ Job added:', job.id);
     console.log('📊 Queue stats:', await reportQueue.getJobCounts());
+
+    return job
 };
 
 testQueue().catch(err => console.error(err));
