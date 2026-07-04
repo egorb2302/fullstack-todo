@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { authenticate } from '../../middleware/auth';
 import { createSchema, paramsSchema } from '../../schemas/todoSchemas';
 import { validate } from '../../middleware/validation';
+import { cache } from '../../middleware/cache';
 
 describe('Middleware Tests', () => {
     describe('Auth middleware', () => {
@@ -101,6 +102,26 @@ describe('Middleware Tests', () => {
 
             expect(res.status).toHaveBeenCalledWith(400)
             expect(next).not.toHaveBeenCalled()
+        })
+    })
+    
+    describe('Caching middleware', () => {
+        it('should caching GET requests as a middleware', async () => {
+            const req = {
+                params: {
+                    id: 'not a number'
+                }
+            } as unknown as Request
+            const res = {
+                status: vi.fn().mockReturnThis(),
+                json: vi.fn().mockReturnThis()
+            } as unknown as Response
+            const next = vi.fn()
+
+            await cache()(req, res, next)
+
+            expect(res.status).not.toHaveBeenCalledWith(500)
+            expect(next).toHaveBeenCalled()       
         })
     })
 });
