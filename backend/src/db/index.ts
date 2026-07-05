@@ -10,9 +10,13 @@ const pool = new Pool({
     connectionString: env.DATABASE_URL,
 })
 
-pool.connect()
-    .then(() => console.log('✅ Connected to PostgreSQL'))
-    .catch(err => console.error('❌ Connection failed:', err.message));
+pool.on("connect", () => {
+    console.log("✅ PostgreSQL connected");
+});
+
+pool.on("error", (err) => {
+    console.error(err);
+});
 
 export const db = drizzle(pool, { schema });
 export type DB = typeof db;

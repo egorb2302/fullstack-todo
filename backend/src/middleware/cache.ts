@@ -25,7 +25,7 @@ export const cache = (ttl: number = DEFAULT_TTL) => {
 
             const originalJson = res.json.bind(res)
             res.json = function(data: any) {
-                redisClient.set(cacheKey, JSON.stringify(data), { EX: ttl })
+                void redisClient.set(cacheKey, JSON.stringify(data), { EX: ttl })
                     .catch(err => logger.error('Cache set error: ', err))
                 return originalJson(data)
             };

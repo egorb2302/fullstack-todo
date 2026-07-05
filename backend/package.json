@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest",
-    "dev": "cross-env REDIS_HOST=localhost npx nodemon",
+    "dev": "cross-env REDIS_HOST=localhost tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "docker:build": "docker-compose build",

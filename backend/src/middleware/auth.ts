@@ -14,6 +14,7 @@ declare global {
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.time("auth");
         const token = req.cookies.accessToken;
         if (!token) {
             return res.status(401).json({ error: "No access token provided" })
@@ -38,6 +39,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
             return res.status(401).json({ message: "User not found" })
         }
         req.user = result[0]
+        console.timeEnd("auth");
         next();
 
     } catch (err) {
