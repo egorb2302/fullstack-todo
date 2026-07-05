@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export interface Todo {
     id: number,
     title: string,
@@ -25,3 +27,10 @@ export interface TodoStore {
     editTodo: (todo: Todo) => void,
     getTodos: () => void
 }
+
+export type GuardProps<T> = {
+    isLoading: boolean;
+    error: Error | null;
+    data: T | null | undefined;
+    children: (data: T) => ReactNode
+};
