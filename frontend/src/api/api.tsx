@@ -10,7 +10,7 @@ console.log("Запрос к ", TODOS_URL)
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
 
-export const getAllTodos = async (): Promise<Todo[] | void> => {
+export const getAllTodos = async (): Promise<Todo[]> => {
     let response = await fetch(TODOS_URL, {
         credentials: 'include',
         headers: {
@@ -36,7 +36,7 @@ export const getAllTodos = async (): Promise<Todo[] | void> => {
 
     if (!response.ok) throw new Error("Error of loading all todos")
     const data = await response.json()
-    return data
+    return Array.isArray(data) ? data : [];
 }
 
 export const getTodo = async (id: number): Promise<Todo> => {
@@ -295,7 +295,7 @@ const refreshAccessToken = async (): Promise<boolean> => {
             refreshPromise = Promise.resolve('refreshed');
             return true;
         } else {
-            refreshPromise = Promise.reject('refresh failed');
+            refreshPromise = null
             return false;
         }
     } catch (error) {

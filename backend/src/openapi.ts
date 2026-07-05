@@ -9,11 +9,15 @@ export const openApiDocument = {
     tags: [
         {
             name: 'Todos',
-            description: 'Управление задачами'
+            description: 'Task managment'
         },
         {
             name: 'Auth',
-            description: 'Аутентификация и управление пользователем'
+            description: 'Authenticate and user managment'
+        },
+        {
+            name: 'Queue',
+            description: 'Queue state and database info'
         }
     ],
     paths: {
@@ -208,6 +212,18 @@ export const openApiDocument = {
                     200: { description: 'Tokens refreshed' },
                     401: { description: 'Invalid refresh token' },
                     500: { description: 'Internal server error' }
+                }
+            }
+        },
+        '/queue/stats': {
+            get: {
+                get: {
+                    tags: ['Queue'],
+                    summary: 'Get queue state and db info',
+                    responses: {
+                        200: { description: 'Successfully' },
+                        500: { description: 'Internal server error' }
+                    }
                 }
             }
         }
