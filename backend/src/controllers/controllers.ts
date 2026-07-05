@@ -1,13 +1,14 @@
 import type { ServerTodoType } from "../types/types"
 import { db } from '../db/index';
 import { NewUser, todos, users } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { Response, Request } from "express";
 import logger from '../middleware/logger';
 import { getQueueStats } from '../queues/monitor';
 import { testQueue } from '../queues/seed';
 import { comparePassword, generateAccessToken, generateRefreshToken, hashPassword, verifyRefreshToken } from "../utils/auth";
 import { redisClient } from "../redis";
+import { invalidateCache } from '../utils/invalidate';
 
 let isTested = false;
 
@@ -20,6 +21,116 @@ export const getDataFromBD = async (req: Request, res: Response): Promise<Server
 export const getTodo = async (id: number): Promise<ServerTodoType | undefined> => {
     const current = await db.select().from(todos).where(eq(todos.id, id))
     return current[0]
+}
+
+export const routes = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        return res.json({ 
+            message: 'Todo API is running',
+            endpoints: {
+                getAll: 'GET /todos',
+                getOne: 'GET /todos/:id',
+                create: 'POST /todos',
+                update: 'PATCH /todos/:id',
+                delete: 'DELETE /todos/:id'
+            }
+        });
+    } catch (err) {
+        console.error(err)
+        return res.status(500).json({ error: "Internal Server Error" })
+    }
+}
+
+export const GETTODOS = async (req: Request, res: Response): Promise<Response> => {
+    try {  
+        const result = await getDataFromBD(req, res)
+        return res.json(result)
+    } catch (err) {
+        logger.error(err)
+        return res.status(500).json({ error: "Internal Server Error" })
+    }
+}
+
+export const GETTODO = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const id = Number(req.params.id)
+        const userId = req.user.id
+        const existing = await db.select().from(todos).where(and(eq(todos.id, id), eq(todos.userId, userId)))
+        if (existing.length === 0) {
+            return res.status(404).json({ message: "Todo not found" })
+        }
+        const todo = await getTodo(id)
+        if (!todo) {
+            return res.status(404).json({ error: "Cant get todo on server" })
+        }
+        return res.json(todo)
+    } catch (err) {
+        logger.error(err)
+        return res.status(500).json({ error: 'Internal server error' })
+    }
+}
+
+export const POSTTODO = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const { title, description, isCompleted } = req.body
+        const newTask: ServerTodoType = {
+            title: title,
+            description: description || '',
+            isCompleted: isCompleted || false,
+            userId: req.user.id
+        }
+        try {
+            const result = await db.insert(todos).values(newTask).returning();
+            invalidateCache('cache:/todos*')
+            return res.status(201).json({ message: 'Task successfully added', task: result[0] })
+        } catch (insertErr) {
+            console.error('❌ Drizzle insert error:', insertErr);
+            throw insertErr;
+        }
+    } catch (err) {
+        logger.error(err)
+        return res.status(500).json({ error: "Internal server error" })
+    }
+}
+
+export const DELETETODO = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const id = Number(req.params.id)
+        const userId = req.user.id
+        const existing = await db.select().from(todos).where(and(eq(todos.id, id), eq(todos.userId, userId)))
+        if (existing.length === 0) {
+            return res.status(404).json({ message: "Todo not found" })
+        }
+
+        const result = await db.delete(todos).where(eq(todos.id, id)).returning()
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Todo not found' });
+        }
+        invalidateCache(`cache:/todos/${id}*`)
+        return res.status(200).json({ message: "Task deleting was successfully" })
+    } catch (err) {
+        logger.error(err)
+        return res.status(500).json({ error: "Internal server error"})
+    }
+}
+
+export const PATCHTODO = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const id = Number(req.params.id)
+        const userId = req.user.id
+        const { title, description, isCompleted } = req.body;
+        const existing = await db.select().from(todos).where(and(eq(todos.id, id), eq(todos.userId, userId)))
+        if (existing.length === 0) {
+            return res.status(404).json({ message: "Todo not found" })
+        }
+
+        const result = await db.update(todos).set({title, description, isCompleted}).where(eq(todos.id, id)).returning()
+        invalidateCache(`cache:/todos/${id}*`)
+        return res.status(200).json({ message: "Task patching was successfully", todo: result[0] })
+    } catch (err) {
+        logger.error(err)
+        return res.status(500).json({ error: "Internal server error"})
+    }
 }
 
 export const register = async (req: Request, res: Response): Promise<Response | undefined> => {
