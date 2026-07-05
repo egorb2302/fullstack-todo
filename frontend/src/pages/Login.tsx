@@ -44,8 +44,9 @@ export default function Login() {
                     
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-mono text-gray-700 mb-1">Email:</label>
+                            <label htmlFor="email" className="block text-sm font-mono text-gray-700 mb-1">Email:</label>
                             <input 
+                                id="email"
                                 {...register('email')} 
                                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all text-gray-900"
                             />
@@ -53,8 +54,9 @@ export default function Login() {
                         </div>
                         
                         <div>
-                            <label className="block text-sm font-mono text-gray-700 mb-1">Password:</label>
+                            <label htmlFor="password" className="block text-sm font-mono text-gray-700 mb-1">Password:</label>
                             <input 
+                                id="password"
                                 {...register('password')} 
                                 type="password"
                                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all text-gray-900"

@@ -7,7 +7,6 @@ import NoTasks from "../components/HaveNoTasks";
 import Check from "../components/Check";
 
 export default function TodoList() {
-    console.log('🔥 TodoList rendered');
     const client = useQueryClient();
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
     const { data: todos, isLoading, error } = useQuery({
