@@ -295,7 +295,7 @@ const refreshAccessToken = async (): Promise<boolean> => {
             refreshPromise = Promise.resolve('refreshed');
             return true;
         } else {
-            refreshPromise = Promise.reject('refresh failed');
+            refreshPromise = null
             return false;
         }
     } catch (error) {
