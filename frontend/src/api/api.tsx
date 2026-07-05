@@ -2,10 +2,11 @@ import type { LoginType } from '../pages/Login';
 import type { RegisterRequest } from '../pages/SignUp';
 import type { ProfileType, Todo } from '../types/types';
 
-const TODOS_URL = "http://localhost:5000/todos"
-const REGISTER_URL = "http://localhost:5000/auth/register"
-const LOGIN_URL = "http://localhost:5000/auth/login"
-console.log("Запрос к ", TODOS_URL)
+const API_BASE = "http://localhost:5000"
+const TODOS_URL = `${API_BASE}/todos`
+const REGISTER_URL = `${API_BASE}/auth/register`
+const LOGIN_URL = `${API_BASE}/auth/login`
+const REFRESH_URL = `${API_BASE}/auth/refresh`
 
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
@@ -225,7 +226,7 @@ export const login = async (user: LoginType): Promise<void> => {
 }
 
 export const getCurrentUser = async (): Promise<ProfileType | null> => {
-    let response = await fetch('http://localhost:5000/auth/me', {
+    let response = await fetch(`${API_BASE}/auth/me`, {
         credentials: 'include',
     })
 
@@ -233,7 +234,7 @@ export const getCurrentUser = async (): Promise<ProfileType | null> => {
         const refreshed = await refreshAccessToken();
         
         if (refreshed) {
-            response = await fetch('http://localhost:5000/auth/me', {
+            response = await fetch(`${API_BASE}/auth/me`, {
                 credentials: 'include',
             });
         } else {
@@ -251,7 +252,7 @@ export const getCurrentUser = async (): Promise<ProfileType | null> => {
 }
 
 export const logout = async (): Promise<void> => {
-    let response = await fetch('http://localhost:5000/auth/logout', {
+    let response = await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
     })
@@ -260,7 +261,7 @@ export const logout = async (): Promise<void> => {
         const refreshed = await refreshAccessToken();
         
         if (refreshed) {
-            response = await fetch('http://localhost:5000/auth/logout', {
+            response = await fetch(`${API_BASE}/auth/logout`, {
                 method: 'POST',
                 credentials: 'include',
             });
@@ -286,7 +287,7 @@ const refreshAccessToken = async (): Promise<boolean> => {
     isRefreshing = true;
 
     try {
-        const response = await fetch('/auth/refresh', {
+        const response = await fetch(REFRESH_URL, {
             method: 'POST',
             credentials: 'include',
         });

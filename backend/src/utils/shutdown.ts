@@ -6,7 +6,7 @@ export let isShuttingDown = false;
 const shutdown = () => {
     logger.info('\n Shutting down...');
     
-    server.close(() => {
+    server?.close(() => {
         logger.info(' Server closed');
         process.exit(0);
     });

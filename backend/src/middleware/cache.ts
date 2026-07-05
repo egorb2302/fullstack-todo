@@ -7,7 +7,10 @@ const DEFAULT_TTL = 10;
 export const cache = (ttl: number = DEFAULT_TTL) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         if (req.method !== "GET") {
-            console.log("not GET, skipping cache")
+            return next()
+        }
+
+        if (!redisClient.isReady) {
             return next()
         }
 
@@ -25,8 +28,10 @@ export const cache = (ttl: number = DEFAULT_TTL) => {
 
             const originalJson = res.json.bind(res)
             res.json = function(data: any) {
-                void redisClient.set(cacheKey, JSON.stringify(data), { EX: ttl })
-                    .catch(err => logger.error('Cache set error: ', err))
+                if (redisClient.isReady) {
+                    void redisClient.set(cacheKey, JSON.stringify(data), { EX: ttl })
+                        .catch(err => logger.error('Cache set error: ', err))
+                }
                 return originalJson(data)
             };
 

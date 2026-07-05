@@ -273,11 +273,17 @@ export const refresh = async (req: Request, res: Response): Promise<Response | u
 
 export const getMe = async (req: Request, res: Response): Promise<Response | undefined> => {
     try {
-        const user = req.user;
-        if (!user) {
+        const userId = req.user?.id;
+        if (!userId) {
             return res.status(401).json({ error: "Unauthorized" })
         }
 
+        const result = await db.select().from(users).where(eq(users.id, userId));
+        if (result.length === 0) {
+            return res.status(401).json({ message: "User not found" })
+        }
+
+        const user = result[0];
         res.json({
             id: user.id,
             email: user.email,

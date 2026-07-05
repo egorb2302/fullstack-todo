@@ -6,6 +6,7 @@ import logger from './middleware/logger';
 import { authenticate } from './middleware/auth';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env';
+import { redisReady } from './redis/index';
 import './queues/workers/reportWorker';
 import todoRouter from './routes/todo.routes';
 import authRouter from './routes/auth.routes';
@@ -29,4 +30,19 @@ app.use('/auth', authRouter)
 
 app.use('/queue', queueRouter)
 
-export const server = app.listen(env.PORT, () => {logger.info(`Server is running on localhost:${env.PORT}`)})
+export let server: ReturnType<Express['listen']>;
+
+async function startServer() {
+    try {
+        await redisReady;
+        logger.info('Redis ready, cache enabled');
+    } catch {
+        logger.warn('Redis unavailable, starting without cache');
+    }
+
+    server = app.listen(env.PORT, () => {
+        logger.info(`Server is running on localhost:${env.PORT}`);
+    });
+}
+
+void startServer();
