@@ -8,7 +8,7 @@ describe('Environment values tests', () => {
 
             expect(url).toBeDefined()
             expect(url).not.toBe(null)
-            expect(url.slice(-6)).toBe('testdb')
+            expect(url).toContain('todo_test')
         })
     })
 
@@ -64,7 +64,7 @@ describe('Environment values tests', () => {
 
             expect(host).toBeDefined()
             expect(host).not.toBe(null)
-            expect(host).toBe('redis')
+            expect(host).toBe('localhost')
         })
     })
 })

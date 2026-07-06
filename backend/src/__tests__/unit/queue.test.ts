@@ -3,7 +3,7 @@ import { testQueue } from "../../queues/seed";
 import { Queue } from "bullmq";
 import { env } from "../../config/env";
 import { createClient } from "redis";
-import { app } from "../../server";
+import { app } from "../../app";
 import request  from "supertest";
 import { getQueueStats } from "../../queues/monitor";
 
@@ -67,6 +67,7 @@ vi.mock('redis', () => ({
 }));
 
 vi.mock('@/redis', () => ({
+    connectRedis: vi.fn().mockResolvedValue(undefined),
     redisClient: {
         connect: vi.fn().mockResolvedValue(undefined),
         quit: vi.fn().mockResolvedValue(undefined),
@@ -120,6 +121,7 @@ vi.mock('@/db', () => ({
 }));
 
 vi.mock('@/queues/queue', () => ({
+    createConnection: vi.fn().mockReturnValue({ host: 'localhost', port: 6379 }),
     connection: {
         host: 'localhost',
         port: 6379,

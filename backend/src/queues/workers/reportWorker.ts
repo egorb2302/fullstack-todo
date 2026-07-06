@@ -1,6 +1,6 @@
-import { Worker } from "bullmq";
+import { Job, Worker } from "bullmq";
 import { redisClient } from "../../redis";
-import { connection } from "../queue";
+import { createConnection } from "../queue";
 
 export const reportWorker = new Worker(
     'report', 
@@ -32,8 +32,18 @@ export const reportWorker = new Worker(
 
         return { success: true }
     },
-    { connection: connection }
+    { connection: createConnection() }
 )
+
+export function startReportWorker() {
+    return new Worker(
+        "report",
+        async (job: Job) => {
+            return true;
+        },
+        { connection: createConnection() }
+    );
+}
 
 reportWorker.on('completed', (job) => {
     console.log(`✅ Job ${job.id} completed successfully, data: `, job.data);
