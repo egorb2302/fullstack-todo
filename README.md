@@ -11,6 +11,7 @@ In this project, i try to create a fullstack application with it own server and 
 **Server:** Node.js + Express, PostgreSQL + Drizzle ORM ,Swagger UI for REST API, JWT Auth, Docker, Redis, BullMQ
 
 - both of sides of my project have Unit \ Integration test with Vitest
+- also both of dirs successfylly passes all tests through Github Actions CI
 
 ## How to run
 
