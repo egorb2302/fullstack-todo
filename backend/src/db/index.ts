@@ -4,7 +4,9 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from './schema';
 import { env } from '../src/../config/env';
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'test') {
+    dotenv.config();
+}
 
 const pool = new Pool({
     connectionString: env.DATABASE_URL,

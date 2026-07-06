@@ -2,10 +2,15 @@ import { createClient } from 'redis';
 import { env } from '../config/env';
 import logger from '../middleware/logger';
 
+function getRedisPort(): number {
+    const url = env.REDIS_URL;
+    return Number(new URL(url).port || 6379);
+}
+
 const redisClient = createClient({
     socket: {
         host: env.REDIS_HOST,
-        port: Number(env.REDIS_URL.slice(-4)),
+        port: getRedisPort(),
         connectTimeout: 5000,
         reconnectStrategy: (retries) => {
             console.log(`🔄 Redis reconnect attempt ${retries}`);
@@ -64,10 +69,5 @@ async function connectRedis() {
         return 
     }
 }
-
-connectRedis().catch((err) => {
-    console.warn('⚠️ Redis connection failed, continuing without cache:', err.message);
-    return null
-});
 
 export { redisClient, connectRedis };

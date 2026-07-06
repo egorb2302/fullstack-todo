@@ -5,6 +5,8 @@
     "dev:frontend": "cd frontend && npm run dev"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@testcontainers/postgresql": "^12.0.4",
+    "concurrently": "^8.2.2",
+    "testcontainers": "^12.0.4"
   }
 }
