@@ -15,7 +15,7 @@ async function startServer() {
         logger.warn('Redis unavailable, starting without cache');
     }
 
-    startReportWorker()
+    // startReportWorker()
 
     server = app.listen(env.PORT, '0.0.0.0', () => {
         logger.info(`Server is running on 0.0.0.0:${env.PORT}`);
