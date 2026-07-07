@@ -4,7 +4,7 @@ const PORT = env.PORT
 
 const securityConfig = {
     corsConfig : {
-        origin: [`http://localhost:${PORT}`, 'http://localhost:5173', 'redis://localhost:6379'],
+        origin: [`http://localhost:${PORT}`, 'http://localhost:5173', 'redis://localhost:6379', /\.vercel\.app$/, "supportive-commitment-production-2930.up.railway.app"],
         // origin: '*', 
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
         allowedHeaders: ['Content-Type', 'Authorization'],

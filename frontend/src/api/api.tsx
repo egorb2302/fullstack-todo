@@ -2,7 +2,8 @@ import type { LoginType } from '../pages/Login';
 import type { RegisterRequest } from '../pages/SignUp';
 import type { ProfileType, Todo } from '../types/types';
 
-const API_BASE = "http://localhost:5000"
+// localhost:5000
+const API_BASE = "https://supportive-commitment-production-2930.up.railway.app:8080" 
 const TODOS_URL = `${API_BASE}/todos`
 const REGISTER_URL = `${API_BASE}/auth/register`
 const LOGIN_URL = `${API_BASE}/auth/login`
