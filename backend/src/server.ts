@@ -1,7 +1,7 @@
 import { Express } from 'express'
 import logger from './middleware/logger';
 import { env } from './config/env';
-import { connectRedis, redisReady } from './redis/index';
+import { connectRedis } from './redis/index';
 import { startReportWorker } from './queues/workers/reportWorker';
 import { app } from './app';
 

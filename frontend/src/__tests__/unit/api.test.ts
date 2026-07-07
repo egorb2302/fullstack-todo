@@ -47,7 +47,7 @@ describe('API Layer Tests', () => {
 
             expect(result).toEqual(mockTodos);
             expect(mockFetch).toHaveBeenCalledWith(
-                'http://localhost:5000/todos',
+                'https://supportive-commitment-production-2930.up.railway.app/todos',
                 {
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
@@ -135,7 +135,7 @@ describe('API Layer Tests', () => {
 
             expect(result).toEqual(mockTodo);
             expect(mockFetch).toHaveBeenCalledWith(
-                'http://localhost:5000/todos/1',
+                'https://supportive-commitment-production-2930.up.railway.app/todos/1',
                 {
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
@@ -187,7 +187,7 @@ describe('API Layer Tests', () => {
             await deleteTodo(1);
 
             expect(mockFetch).toHaveBeenCalledWith(
-                'http://localhost:5000/todos/1',
+                'https://supportive-commitment-production-2930.up.railway.app/todos/1',
                 {
                     credentials: 'include',
                     method: 'DELETE',
@@ -247,7 +247,7 @@ describe('API Layer Tests', () => {
 
             expect(result).toEqual(createdTodo);
             expect(mockFetch).toHaveBeenCalledWith(
-                'http://localhost:5000/todos',
+                'https://supportive-commitment-production-2930.up.railway.app/todos',
                 {
                     credentials: 'include',
                     method: 'POST',
@@ -306,7 +306,7 @@ describe('API Layer Tests', () => {
 
             expect(result).toEqual(patchedTodo);
             expect(mockFetch).toHaveBeenCalledWith(
-                'http://localhost:5000/todos/1',
+                'https://supportive-commitment-production-2930.up.railway.app/todos/1',
                 {
                     credentials: 'include',
                     method: 'PATCH',
@@ -358,7 +358,7 @@ describe('API Layer Tests', () => {
                 await registerAPI(mockUser);
 
                 expect(mockFetch).toHaveBeenCalledWith(
-                    'http://localhost:5000/auth/register',
+                    'https://supportive-commitment-production-2930.up.railway.app/auth/register',
                     {
                         credentials: 'include',
                         method: 'POST',
@@ -397,7 +397,7 @@ describe('API Layer Tests', () => {
 
                 expect(result).toEqual(mockResponse.user);
                 expect(mockFetch).toHaveBeenCalledWith(
-                    'http://localhost:5000/auth/login',
+                    'https://supportive-commitment-production-2930.up.railway.app/auth/login',
                     {
                         credentials: 'include',
                         method: 'POST',

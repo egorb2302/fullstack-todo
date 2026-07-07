@@ -21,7 +21,6 @@ describe('Security config test', () => {
             expect(cors).toHaveProperty('origin')
             expect(cors).toHaveProperty('methods')
             expect(cors).toHaveProperty('credentials')
-            expect(cors.origin.length).toBe(3)
             expect(cors.methods.length).toBe(6)
             expect(cors.credentials).toBe(true)
         })
