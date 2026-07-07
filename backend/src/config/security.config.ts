@@ -7,8 +7,9 @@ const securityConfig = {
         origin: [`http://localhost:${PORT}`, 'http://localhost:5173', 'redis://localhost:6379', /\.vercel\.app$/, "https://supportive-commitment-production-2930.up.railway.app"],
         // origin: '*', 
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
         credentials: true,
+        exposedHeaders: ['Content-Length', 'X-Total-Count'],
     },
     helmetConfig : {
         contentSecurityPolicy: false,
