@@ -45,15 +45,15 @@ redisClient.on('end', () => {
     logger.warn('Redis connection closed');
 });
 
-export const redisReady = new Promise<void>((resolve, reject) => {
+export const redisReady = new Promise<void>((resolve) => {
     redisClient.once('ready', () => {
         console.log('✅ Redis is ready for use');
         resolve();
     });
-    
+
     redisClient.once('error', (err) => {
         console.error('❌ Redis failed to connect:', err);
-        reject(err);
+        resolve(); // Resolve instead of reject so the process does not crash
     });
 });
 
