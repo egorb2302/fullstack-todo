@@ -17,8 +17,8 @@ async function startServer() {
 
     startReportWorker()
 
-    server = app.listen(env.PORT, () => {
-        logger.info(`Server is running on localhost:${env.PORT}`);
+    server = app.listen(env.PORT, '0.0.0.0', () => {
+        logger.info(`Server is running on 0.0.0.0:${env.PORT}`);
     });
 }
 
