@@ -206,6 +206,10 @@ describe('Queue tests', () => {
         it('should create a seed for queue', async () => {
             const job = await testQueue()
 
+            if (!job) {
+                throw new Error('Job is undefined');
+            }
+
             console.log(job)
             expect(job).toBeDefined()
             expect(job.id).not.toBe(null)

@@ -42,11 +42,16 @@ const pg_1 = require("pg");
 const node_postgres_1 = require("drizzle-orm/node-postgres");
 const schema = __importStar(require("./schema"));
 const env_1 = require("../src/../config/env");
-dotenv_1.default.config();
+if (process.env.NODE_ENV !== 'test') {
+    dotenv_1.default.config();
+}
 const pool = new pg_1.Pool({
     connectionString: env_1.env.DATABASE_URL,
 });
-pool.connect()
-    .then(() => console.log('✅ Connected to PostgreSQL'))
-    .catch(err => console.error('❌ Connection failed:', err.message));
+pool.on("connect", () => {
+    console.log("✅ PostgreSQL connected");
+});
+pool.on("error", (err) => {
+    console.error(err);
+});
 exports.db = (0, node_postgres_1.drizzle)(pool, { schema });

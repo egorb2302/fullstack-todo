@@ -2,9 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticate = void 0;
 const auth_1 = require("../utils/auth");
-const db_1 = require("../db");
-const schema_1 = require("../db/schema");
-const drizzle_orm_1 = require("drizzle-orm");
 const authenticate = async (req, res, next) => {
     try {
         const token = req.cookies.accessToken;
@@ -25,11 +22,7 @@ const authenticate = async (req, res, next) => {
         if (isNaN(userId)) {
             return res.status(401).json({ message: "Invalid user ID in token" });
         }
-        const result = await db_1.db.select().from(schema_1.users).where((0, drizzle_orm_1.eq)(schema_1.users.id, userId));
-        if (result.length === 0) {
-            return res.status(401).json({ message: "User not found" });
-        }
-        req.user = result[0];
+        req.user = { id: userId };
         next();
     }
     catch (err) {

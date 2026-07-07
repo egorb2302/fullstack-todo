@@ -7,7 +7,7 @@ exports.todos = (0, pg_core_1.pgTable)('todos', {
     userId: (0, pg_core_1.integer)('user_id').references(() => exports.users.id).notNull(),
     title: (0, pg_core_1.varchar)('title', { length: 100 }).notNull(),
     description: (0, pg_core_1.varchar)('description', { length: 500 }),
-    isCompleted: (0, pg_core_1.boolean)('is_completed').default(false)
+    isCompleted: (0, pg_core_1.boolean)('is_completed').default(false).notNull()
 });
 exports.users = (0, pg_core_1.pgTable)('users', {
     id: (0, pg_core_1.serial)('id').primaryKey(),

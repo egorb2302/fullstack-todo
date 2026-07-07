@@ -4,7 +4,7 @@ const env_1 = require("../config/env");
 const PORT = env_1.env.PORT;
 const securityConfig = {
     corsConfig: {
-        origin: [`http://localhost:${PORT}`, 'http://localhost:5173'],
+        origin: [`http://localhost:${PORT}`, 'http://localhost:5173', 'redis://localhost:6379'],
         // origin: '*', 
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
         allowedHeaders: ['Content-Type', 'Authorization'],
