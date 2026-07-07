@@ -11,13 +11,13 @@ import cors from 'cors';
 
 export const app: Express = express()
 
-app.use(express.urlencoded({ extended: true }))
-
 app.options('*', cors())
 
 app.use(securityMiddleware)
 
 app.use(express.json())
+
+app.use(express.urlencoded({ extended: true }))
 
 app.use(cookieParser());
 
