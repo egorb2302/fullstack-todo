@@ -1,4 +1,4 @@
-import { Job, Worker } from "bullmq";
+import { Worker } from "bullmq";
 import { redisClient } from "../../redis";
 import { createConnection } from "../queue";
 

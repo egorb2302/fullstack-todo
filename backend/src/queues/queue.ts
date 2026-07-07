@@ -17,6 +17,6 @@ export const reportQueue = new Queue("report", {
     connection: createConnection(),
 });
 
-export const notificationsQueue = new Queue("notifications", {
-    connection: createConnection(),
+reportQueue.on('error', (err) => {
+    console.error('❌ Report queue error:', err);
 });
