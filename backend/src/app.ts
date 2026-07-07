@@ -11,6 +11,8 @@ import { routes } from './controllers/controllers';
 
 export const app: Express = express()
 
+app.set('trust proxy', 1)
+
 app.use(securityMiddleware)
 
 app.use(express.json())
