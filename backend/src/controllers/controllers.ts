@@ -81,7 +81,11 @@ export const POSTTODO = async (req: Request, res: Response): Promise<Response> =
         }
         try {
             const result = await db.insert(todos).values(newTask).returning();
-            invalidateCache('cache:/todos*')
+            try {
+                await invalidateCache('cache:/todos*')
+            } catch (er) {
+                console.error(er)
+            }
             return res.status(201).json({ message: 'Task successfully added', task: result[0] })
         } catch (insertErr) {
             console.error('❌ Drizzle insert error:', insertErr);
@@ -106,7 +110,11 @@ export const DELETETODO = async (req: Request, res: Response): Promise<Response>
         if (result.length === 0) {
             return res.status(404).json({ error: 'Todo not found' });
         }
-        invalidateCache(`cache:/todos/${id}*`)
+        try {
+            await invalidateCache(`cache:/todos/${id}*`)
+        } catch (er) {
+            console.log(er)
+        }
         return res.status(200).json({ message: "Task deleting was successfully" })
     } catch (err) {
         logger.error(err)
@@ -125,7 +133,11 @@ export const PATCHTODO = async (req: Request, res: Response): Promise<Response> 
         }
 
         const result = await db.update(todos).set({title, description, isCompleted}).where(eq(todos.id, id)).returning()
-        invalidateCache(`cache:/todos/${id}*`)
+        try {
+            await invalidateCache(`cache:/todos/${id}*`)
+        } catch (er) {
+            console.error(er)
+        }
         return res.status(200).json({ message: "Task patching was successfully", todo: result[0] })
     } catch (err) {
         logger.error(err)

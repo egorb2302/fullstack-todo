@@ -36,13 +36,7 @@ export const reportWorker = new Worker(
 )
 
 export function startReportWorker() {
-    return new Worker(
-        "report",
-        async (job: Job) => {
-            return true;
-        },
-        { connection: createConnection() }
-    );
+    console.log('Report worker already initialized');
 }
 
 reportWorker.on('completed', (job) => {
@@ -59,4 +53,8 @@ reportWorker.on('active', (job) => {
 
 reportWorker.on('progress', (job, progress) => {
     console.log(`📊 Job ${job.id} progress: ${progress}%`);
+});
+
+reportWorker.on('error', (err) => {
+    console.error('❌ Report worker error:', err);
 });
