@@ -20,7 +20,7 @@ const envSchema = z.object({
     REDIS_URL: z.string().url('REDIS_URL must be a valid URL').refine(
         (url) => url.startsWith('redis://'),
     ).default('redis://localhost:6379'),
-    REDIS_HOST: z.string()
+    REDIS_HOST: z.string().optional()
 })
 
 let cachedEnv: z.infer<typeof envSchema> | null = null;

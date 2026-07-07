@@ -10,7 +10,7 @@
     "test": "vitest",
     "dev": "cross-env REDIS_HOST=localhost tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "npm run db:migrate && node dist/server.js",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down",
