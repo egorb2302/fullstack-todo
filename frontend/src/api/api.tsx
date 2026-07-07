@@ -119,6 +119,7 @@ export const addTodo = async (task: Omit<Todo, "id">): Promise<Todo> => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(task)
             });
         } else {
             window.location.href = '/auth/login';
@@ -151,6 +152,7 @@ export const patchTodo = async ({ id, ...task }: { id: number } & Partial<Todo>)
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(task)
             });
         } else {
             window.location.href = '/auth/login';
@@ -214,6 +216,7 @@ export const login = async (user: LoginType): Promise<void> => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(user)
             });
         } else {
             window.location.href = '/auth/login';
