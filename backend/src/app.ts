@@ -7,12 +7,9 @@ import { securityMiddleware } from './middleware/security';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import { openApiDocument } from './openapi';
-import cors from 'cors';
 import { routes } from './controllers/controllers';
 
 export const app: Express = express()
-
-app.options('*', cors())
 
 app.use(securityMiddleware)
 
