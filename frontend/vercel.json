@@ -6,6 +6,6 @@
         }
     ],
     "env": {
-        "VITE_API_URL": "https://supportive-commitment-production-2930.up.railway.app:8080"
+        "VITE_API_URL": "https://supportive-commitment-production-2930.up.railway.app/"
     }
 }
