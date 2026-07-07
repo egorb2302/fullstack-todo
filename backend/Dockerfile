@@ -22,6 +22,8 @@ COPY --from=builder /backend/dist ./dist
 
 COPY --from=builder /backend/drizzle.config.js ./
 
+COPY --from=builder /backend/src/db/migrations ./src/db/migrations
+
 EXPOSE 5000
 
-CMD ["sh", "-c", "node node_modules/drizzle-kit/bin.cjs migrate && node dist/server.js"]
+CMD ["sh", "-c", "npm run db:migrate && echo MIGRATION_OK && node dist/server.js"]
