@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import { openApiDocument } from './openapi';
 import cors from 'cors';
+import { routes } from './controllers/controllers';
 
 export const app: Express = express()
 
@@ -24,6 +25,8 @@ app.use(cookieParser());
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+app.get('/', routes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument))
 
