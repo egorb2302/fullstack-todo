@@ -10,9 +10,9 @@ In this project, i try to create a fullstack application with it own server and 
 
 **Server:** Node.js + Express, PostgreSQL + Drizzle ORM ,Swagger UI for REST API, JWT Auth, Docker, Redis, BullMQ
 
-**Deploy\CD** Railway (backend) \ Vercel (frontend)
+**Deploy\CD:** Railway (backend) \ Vercel (frontend)
 
-**Testing\CI** Vitest, React testing library, Github Actions
+**Testing\CI:** Vitest, React testing library, Github Actions
 
 ## How to run
 
