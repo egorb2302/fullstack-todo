@@ -8,55 +8,81 @@ export default function TodoDetails() {
     const { id } = useParams();
     const trueID = Number(id)
     const { data, isLoading, error } = useQuery<Todo>({
-        queryKey: ['todo'],
+        // id в ключе, иначе при переходе между задачами показывается кеш предыдущей
+        queryKey: ['todo', trueID],
         queryFn: () => getTodo(trueID)
     })
 
     if (isNaN(trueID)) {
-        return <div>Invalid todo ID</div>;
+        return (
+            <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
+                <p className="font-mono text-sm text-danger">Invalid todo ID</p>
+                <Link
+                    to="/todos"
+                    className="font-mono text-sm text-soft transition-colors duration-150 hover:text-accent"
+                >
+                    ← back to tasks
+                </Link>
+            </div>
+        );
     }
 
     return (
         <Check isLoading={isLoading} error={error} data={data}>
             {(data) => (
-                <div key={data.id} className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">
-                    <div className="w-full max-w-2xl mt-8">
-                        <Link to="/todos">
-                        <button className="cursor-pointer text-orange-500 hover:text-orange-600 text-sm font-mono mb-6 inline-block">
-                            ← back to tasks
-                        </button>
-                        </Link>
-                        
-                        <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-                            <div className="flex items-start justify-between mb-6">
-                                <h1 className="text-3xl font-bold text-gray-900">{data.title}</h1>
-                                <div className={`flex items-center gap-1.5 text-sm font-mono
-                                ${data.isCompleted ? 'text-green-600' : 'text-amber-600'}`}
+                <div>
+                    <Link
+                        to="/todos"
+                        className="font-mono text-sm text-soft transition-colors duration-150 hover:text-accent"
+                    >
+                        ← back to tasks
+                    </Link>
+
+                    <article className="sheet mt-5 animate-pop-in overflow-hidden">
+                        {/* Шапка файла: путь до строки и её статус */}
+                        <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 sm:px-5">
+                            <span className="font-mono text-xs text-soft">tasks / {data.id}</span>
+                            <span
+                                className={`flex items-center gap-1.5 font-mono text-xs ${
+                                    data.isCompleted ? "text-ok" : "text-accent"
+                                }`}
+                            >
+                                <span
+                                    className={`h-2 w-2 rounded-full ${data.isCompleted ? "bg-ok" : "bg-accent"}`}
+                                    aria-hidden
+                                />
+                                {data.isCompleted ? "Completed" : "In Progress"}
+                            </span>
+                        </div>
+
+                        <div className="flex">
+                            <span className="gutter-cell pb-4" aria-hidden>01</span>
+                            <div className="min-w-0 flex-1 px-4 py-4 sm:px-5">
+                                <span
+                                    className={`kw ${data.isCompleted ? "text-ok" : "text-accent"}`}
+                                    aria-hidden
                                 >
-                                    <span className={`w-2 h-2 rounded-full ${data.isCompleted ? 'bg-green-500' : 'bg-amber-500'}`}></span>
-                                    {data.isCompleted ? "Completed" : "In Progress"}
-                                </div>
-                            </div>
-                            
-                            <div className="border-t border-gray-100 pt-6">
-                                <h3 className="text-sm font-mono text-gray-400 mb-2">Description</h3>
-                                <p className="text-gray-700 text-lg leading-relaxed">{data.description}</p>
-                            </div>
-                            
-                            <div className="mt-8 pt-6 border-t border-gray-100">
-                                <div className="flex items-center gap-4">
-                                    <div className={`px-4 py-2 rounded-lg font-mono text-sm
-                                        ${data.isCompleted 
-                                        ? 'bg-green-50 text-green-700 border border-green-200' 
-                                        : 'bg-amber-50 text-amber-700 border border-amber-200'
-                                        }`}
-                                    >
-                                        {data.isCompleted ? "✓ Task completed" : "○ Task in progress"}
-                                    </div>
-                                </div>
+                                    {data.isCompleted ? "DONE" : "TODO"}
+                                </span>
+                                <h1
+                                    className={`mt-1.5 font-mono text-xl font-semibold leading-snug sm:text-2xl ${
+                                        data.isCompleted
+                                            ? "text-soft line-through decoration-2"
+                                            : "text-ink"
+                                    }`}
+                                >
+                                    {data.title}
+                                </h1>
+
+                                {data.description && (
+                                    <p className="comment mt-3 text-sm">
+                                        <span aria-hidden>{"// "}</span>
+                                        {data.description}
+                                    </p>
+                                )}
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             )}
         </Check>

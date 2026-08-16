@@ -1,39 +1,30 @@
 import { Link } from 'react-router';
+import StandaloneHeader from './StandaloneHeader';
 
 export default function Unauthorized() {
     return (
-        <div className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">
-            <div className="w-full max-w-md mt-20">
-                <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-6">
-                        <span className="text-orange-500">//</span> Oops! You're unauthorized yet.
-                    </h1>
-                    
-                    <div className="space-y-4">
-                        <div>
-                            <h3 className="text-gray-600 text-sm font-mono mb-3">
-                                Fix that with login
-                            </h3>
-                            <Link to="/auth/login">
-                                <button className="px-5 py-2.5 bg-linear-to-r from-orange-400 to-amber-500 text-white rounded-xl 
-                                hover:opacity-90 font-medium transition-opacity cursor-pointer">
-                                    login
-                                </button>
-                            </Link>
-                        </div>
-                        
-                        <div className="border-t border-gray-200 pt-4">
-                            <h3 className="text-gray-600 text-sm font-mono mb-3">
-                                Or, if you not registered before
-                            </h3>
-                            <Link to="/auth/register">
-                                <button className="px-5 py-2.5  from-orange-400 to-amber-500
-                                text-gray-500 border-2 border-gray-300 rounded-xl duration-300
-                                hover:bg-gray-100 font-medium transition-opacity cursor-pointer">
-                                    register
-                                </button>
-                            </Link>
-                        </div>
+        <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-6">
+            <StandaloneHeader />
+
+            <div className="sheet mt-16 animate-pop-in p-7 text-center sm:p-8">
+                <h1 className="text-2xl font-bold text-ink">
+                    <span className="font-mono text-accent">//</span> Not signed in
+                </h1>
+                <p className="comment mt-2">{"// your session is missing or expired"}</p>
+
+                <div className="mt-8 space-y-6">
+                    <div>
+                        <p className="mb-3 font-mono text-xs text-soft">Log in to open your tasks</p>
+                        <Link to="/auth/login" className="btn-accent w-full">
+                            login
+                        </Link>
+                    </div>
+
+                    <div className="border-t border-line pt-6">
+                        <p className="mb-3 font-mono text-xs text-soft">New here? Create an account</p>
+                        <Link to="/auth/register" className="btn-ghost w-full">
+                            register
+                        </Link>
                     </div>
                 </div>
             </div>

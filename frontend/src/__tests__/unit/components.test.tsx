@@ -42,7 +42,7 @@ describe('Components tests', () => {
         it('should render unauthorized page', () => {
             renderComponent(<Unauthorized />)
             
-            expect(screen.getByText("Oops! You're unauthorized yet.")).toBeInTheDocument()
+            expect(screen.getByText("Not signed in")).toBeInTheDocument()
         })
 
         it('should open the login page on click', async () => {
@@ -95,7 +95,7 @@ describe('Components tests', () => {
             renderComponent(<Layout />)
 
             await waitFor(() => {
-                expect(screen.getByText("Oops! You're unauthorized yet.")).toBeInTheDocument()
+                expect(screen.getByText("Not signed in")).toBeInTheDocument()
             })
         })
     })

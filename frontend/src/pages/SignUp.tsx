@@ -3,14 +3,15 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 import { registerAPI } from "../api/api";
+import StandaloneHeader from "../components/StandaloneHeader";
 
 const registerSchema = z.object({
     name: z.string().optional(),
     email: z.string(),
-    password: z.string().min(6, "Min length fror password is 6 chars"),
+    password: z.string().min(6, "Password needs at least 6 characters"),
     confirmPass: z.string()
 }).refine(data => data.password === data.confirmPass,
-    { message: "Passwords is compare", path: ['confirmPass']}
+    { message: "Passwords do not match", path: ['confirmPass']}
 )
 
 export type RegisterType = z.infer<typeof registerSchema>
@@ -22,11 +23,10 @@ export default function Signup() {
     })
 
     const nav = useNavigate()
-    const onSubmit = async (data: RegisterRequest) => { 
+    const onSubmit = async (data: RegisterRequest) => {
         try {
             const { name, email, password } = data
             await registerAPI({name, email, password})
-            console.log("Data was successfully added", data)
             nav('/auth/login')
         } catch (err) {
             console.error(err)
@@ -34,71 +34,74 @@ export default function Signup() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">
-            <div className="w-full max-w-md mt-20">
-                <div className="bg-white border border-gray-200 rounded-xl p-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-8">
-                        <span className="text-orange-500">//</span> Register
-                    </h1>
-                    
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-mono text-gray-700 mb-1">Name:</label>
-                            <input 
-                                id="name"
-                                {...register('name')} 
-                                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all text-gray-900"
-                            />
-                            {errors.name && <span className="text-red-500 text-sm mt-1 block">{errors.name.message}</span>}
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-mono text-gray-700 mb-1">Email:</label>
-                            <input 
-                                id="email"
-                                {...register('email')} 
-                                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all text-gray-900"
-                            />
-                            {errors.email && <span className="text-red-500 text-sm mt-1 block">{errors.email.message}</span>}
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-mono text-gray-700 mb-1">Password:</label>
-                            <input 
-                                id="password"
-                                {...register('password')} 
-                                type="password"
-                                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all text-gray-900"
-                            />
-                            {errors.password && <span className="text-red-500 text-sm mt-1 block">{errors.password.message}</span>}
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="confirmPass" className="block text-sm font-mono text-gray-700 mb-1">Confirm password:</label>
-                            <input 
-                                id="confirmPass"
-                                {...register('confirmPass')} 
-                                type="password"
-                                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all text-gray-900"
-                            />
-                            {errors.confirmPass && <span className="text-red-500 text-sm mt-1 block">{errors.confirmPass.message}</span>}
-                        </div>
+        <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-6">
+            <StandaloneHeader />
 
-                        <button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className="w-full px-5 py-2.5 bg-linear-to-r from-orange-400 to-amber-500 text-white rounded-xl 
-                        hover:opacity-90 font-medium transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-                        >
-                        {isSubmitting ? "Register..." : "Register"}
-                        </button>
-                    </form>
-                    
-                    <div className="mt-6 text-center">
-                        <Link to="/auth/login" className="text-orange-500 hover:text-orange-600 text-sm font-mono transition-colors">
-                        already have account? Login →
-                        </Link>
+            <div className="sheet mt-10 animate-pop-in p-7 sm:mt-14 sm:p-8">
+                <p className="crumb">~/auth/register</p>
+                <h1 className="mt-2 text-3xl font-bold text-ink">
+                    <span className="font-mono text-accent">//</span> Register
+                </h1>
+
+                <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
+                    <div>
+                        <label htmlFor="name" className="mb-1.5 block font-mono text-xs text-soft">Name</label>
+                        <input
+                            id="name"
+                            {...register('name')}
+                            autoComplete="name"
+                            className="field"
+                        />
+                        {errors.name && <span className="mt-1.5 block font-mono text-xs text-danger">{errors.name.message}</span>}
                     </div>
+
+                    <div>
+                        <label htmlFor="email" className="mb-1.5 block font-mono text-xs text-soft">Email</label>
+                        <input
+                            id="email"
+                            {...register('email')}
+                            autoComplete="email"
+                            className="field"
+                        />
+                        {errors.email && <span className="mt-1.5 block font-mono text-xs text-danger">{errors.email.message}</span>}
+                    </div>
+
+                    <div>
+                        <label htmlFor="password" className="mb-1.5 block font-mono text-xs text-soft">Password</label>
+                        <input
+                            id="password"
+                            {...register('password')}
+                            type="password"
+                            autoComplete="new-password"
+                            className="field"
+                        />
+                        {errors.password && <span className="mt-1.5 block font-mono text-xs text-danger">{errors.password.message}</span>}
+                    </div>
+
+                    <div>
+                        <label htmlFor="confirmPass" className="mb-1.5 block font-mono text-xs text-soft">Confirm password</label>
+                        <input
+                            id="confirmPass"
+                            {...register('confirmPass')}
+                            type="password"
+                            autoComplete="new-password"
+                            className="field"
+                        />
+                        {errors.confirmPass && <span className="mt-1.5 block font-mono text-xs text-danger">{errors.confirmPass.message}</span>}
+                    </div>
+
+                    <button type="submit" disabled={isSubmitting} className="btn-accent mt-1 w-full">
+                        {isSubmitting ? "Register..." : "Register"}
+                    </button>
+                </form>
+
+                <div className="mt-6 text-center">
+                    <Link
+                        to="/auth/login"
+                        className="font-mono text-sm text-accent transition-colors duration-150 hover:text-accent-deep"
+                    >
+                        Already have account? Login →
+                    </Link>
                 </div>
             </div>
         </div>

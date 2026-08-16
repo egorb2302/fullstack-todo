@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { usernameOutput } from "../utils/username";
 import { Link } from 'react-router';
 import Check from "../components/Check";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function Profile() {
     const { data: users , isLoading, error } = useQuery({
@@ -20,47 +21,46 @@ export default function Profile() {
     return (
         <Check isLoading={isLoading} error={error} data={users}>
             {(users) => (
-                <div className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">
-                    <div className="w-full max-w-md mt-20">
-                        <Link 
-                            to="/" 
-                            className="text-orange-500 hover:text-orange-600 text-sm font-mono transition-colors inline-block mb-6"
+                <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-6">
+                    <div className="flex items-center justify-between gap-3">
+                        <Link
+                            to="/"
+                            className="font-mono text-sm text-soft transition-colors duration-150 hover:text-accent"
                         >
                             ← back to home
                         </Link>
-                        
-                        <div className="bg-white border border-gray-200 rounded-xl p-8">
-                            <h1 className="text-3xl font-bold text-gray-900 mb-12">
-                                <span className="text-orange-500">//</span> Profile
-                            </h1>
-                            
-                            <div className="space-y-6">
-                                <div className="flex items-center justify-center">
-                                    <div className="w-24 h-24 bg-linear-to-r from-orange-400 to-amber-500 rounded-full flex items-center justify-center text-white text-3xl font-bold mb-6">
-                                        {usernameOutput(users)}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-mono text-gray-500 mb-1">Name</label>
-                                    <h2 className="text-lg font-semibold text-gray-900">{users.name}</h2>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-mono text-gray-500 mb-1">Email</label>
-                                    <h2 className="text-lg text-gray-700 font-mono">{users.email}</h2>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-mono text-gray-500 mb-1">ID</label>
-                                    <p className="text-sm font-mono text-gray-400">{users.id}</p>
-                                </div>   
-                                <button 
-                                onClick={logoutHandler}
-                                className="w-full px-5 py-2.5 bg-gray-50 text-red-500 border border-red-300 rounded-lg 
-                                hover:bg-red-100 text-sm font-mono transition-colors cursor-pointer mt-6"
-                                >
-                                logout
-                                </button>
+                        <ThemeToggle />
+                    </div>
+
+                    <div className="sheet mt-14 animate-pop-in p-7 sm:p-8">
+                        <p className="crumb">~/profile</p>
+                        <h1 className="mt-2 text-3xl font-bold text-ink">
+                            <span className="font-mono text-accent">//</span> Profile
+                        </h1>
+
+                        <div className="mt-8 flex items-center gap-5">
+                            <div
+                                className="grid h-20 w-20 shrink-0 place-items-center rounded-xl bg-accent font-mono text-2xl font-bold text-on-accent"
+                                aria-hidden
+                            >
+                                {usernameOutput(users)}
+                            </div>
+                            <div className="min-w-0">
+                                <h2 className="truncate text-lg font-semibold text-ink">{users.name}</h2>
+                                <p className="truncate font-mono text-sm text-soft">{users.email}</p>
                             </div>
                         </div>
+
+                        <dl className="mt-8 border-y border-line">
+                            <div className="flex items-baseline justify-between gap-4 py-3.5">
+                                <dt className="font-mono text-xs text-faint">id</dt>
+                                <dd className="truncate font-mono text-sm text-soft">{users.id}</dd>
+                            </div>
+                        </dl>
+
+                        <button onClick={logoutHandler} className="btn-danger-ghost mt-8 w-full">
+                            logout
+                        </button>
                     </div>
                 </div>
             )}

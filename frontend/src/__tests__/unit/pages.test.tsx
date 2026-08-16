@@ -309,7 +309,7 @@ describe('Pages tests', () => {
 
             expect(
                 await screen.findByText(
-                    "Min length of password is 6 chars"
+                    "Password needs at least 6 characters"
                 )
             ).toBeInTheDocument();
 
@@ -447,7 +447,7 @@ describe('Pages tests', () => {
 
             expect(
                 await screen.findByText(
-                    "Min length fror password is 6 chars"
+                    "Password needs at least 6 characters"
                 )
             ).toBeInTheDocument();
 
@@ -482,7 +482,7 @@ describe('Pages tests', () => {
             );
 
             expect(
-                await screen.findByText("Passwords is compare")
+                await screen.findByText("Passwords do not match")
             ).toBeInTheDocument();
 
             expect(api.registerAPI).not.toHaveBeenCalled();

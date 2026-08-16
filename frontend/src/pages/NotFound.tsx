@@ -1,26 +1,27 @@
 import { Link } from 'react-router';
+import StandaloneHeader from '../components/StandaloneHeader';
 
 export default function NotFound() {
     return (
-        <div className="min-h-screen bg-[#f5f5f0] flex justify-center p-6">
-            <div className="w-full max-w-md mt-20">
-                <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
-                    <h1 className="text-8xl font-bold text-gray-900 mb-4">
-                        <span className="text-orange-500">//</span> 404
-                    </h1>
-                    <h2 className="text-xl text-gray-600 mb-8 font-mono">
-                        page not found
-                    </h2>
-                    
-                    <div className="flex justify-center">
-                        <Link 
-                            to="/" 
-                            className="text-orange-500 hover:text-orange-600 text-sm font-mono transition-colors"
-                        >
-                            back to home →
-                        </Link>
-                    </div>
-                </div>
+        <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-6">
+            <StandaloneHeader />
+
+            <div className="flex flex-1 flex-col items-center justify-center pb-24 text-center">
+                <p className="crumb">~/nowhere</p>
+                <h1 className="mt-3 font-mono text-7xl font-bold text-ink sm:text-8xl">
+                    <span className="text-accent">//</span> 404
+                </h1>
+                <h2 className="mt-4 font-mono text-lg text-soft">
+                    page not found
+                </h2>
+                <p className="comment mt-2">{"// this file does not exist"}</p>
+
+                <Link
+                    to="/"
+                    className="mt-8 font-mono text-sm text-accent transition-colors duration-150 hover:text-accent-deep"
+                >
+                    back to home →
+                </Link>
             </div>
         </div>
     )
