@@ -14,7 +14,7 @@ export const cache = (ttl: number = DEFAULT_TTL) => {
             return next()
         }
 
-        const cacheKey = `cache:${req.originalUrl || req.url}`;
+        const cacheKey = `cache:${req?.user || req.url}`;
 
         try {
             const cachedData = await redisClient.get(cacheKey)
